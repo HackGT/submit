@@ -1,6 +1,9 @@
 # Submit
 Hackathon Submission Management
 
+### Setup
+This project uses yarn for package management.
+
 ### Start Server
 1. `cd server`
 2. Copy `.env.example` to `.env` and fill out secrets
