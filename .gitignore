@@ -1,0 +1,9 @@
+# secrets
+.env
+
+# folders
+**/node_modules
+**/build
+
+# misc
+.DS_Store
