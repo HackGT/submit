@@ -40,12 +40,13 @@ exports.GroundTruthStrategy = class GroundTruthStrategy extends OAuthStrategy {
     }
 
     static async passportCallback(req, accessToken, refreshToken, profile, done) {
-        let user = await User.findOne({ uuid: profile.uuid });
+        let user = await User.findOne({ email: profile.email });
 
         if (!user) {
             user = createNew(User, { ...profile });
         } else {
             user.token = accessToken;
+            user.uuid = profile.uuid;
         }
 
         await user.save();
