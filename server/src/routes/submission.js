@@ -1,3 +1,5 @@
+const express = require("express");
+
 let submissionRoutes = express.Router();
 
 /*
@@ -10,7 +12,6 @@ let submissionRoutes = express.Router();
     - errors
 */
 submissionRoutes.route("/team-validation").post((req, res) => {
-
 });
 
 /*
@@ -39,3 +40,5 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 submissionRoutes.route("/devpost-validation").post((req, res) => {
 
 })
+
+exports.submissionRoutes = submissionRoutes;
