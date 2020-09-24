@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const MONGO_URL = String(process.env.MONGO_URL);
 mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true }).catch(err => {
@@ -39,21 +42,16 @@ exports.User = mongoose.model("User", new mongoose.Schema({
 ));
 
 exports.Team = mongoose.model("Team", new mongoose.Schema({
-    members: {
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
-        type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }],
         unique: true
-    },
+    }],
     submission: {
-        type: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Submission"
-        },
-        unique: true,
-
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Submission",
+        unique: true
     }
 }));
 
@@ -68,18 +66,14 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
 
 exports.Submission = mongoose.model("Submission", new mongoose.Schema({
     devpost: String,
-    categories: {
-        required: true,
-        type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Category"
-        }]
-    },
+    categories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        required: true
+    }],
     hackathon: {
-        required: true,
-        type: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Hackathon"
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Hackathon",
+        required: true
     }
 }));
