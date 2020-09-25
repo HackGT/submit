@@ -46,7 +46,7 @@ const App: React.FC = () => {
           <div style={{ background: "#fff", padding: "24px", flexGrow: 1 }}>
             <Switch>
               <Route exact path="/" component={Dashboard} />
-              <Route exact path="/create" component={CreateSubmission} />
+              <Route exact path="/create" render={() => <CreateSubmission user={user!} />} />
               <PrivateRoute exact path="/admin" component={AdminHome} user={user} />
             </Switch>
           </div>
