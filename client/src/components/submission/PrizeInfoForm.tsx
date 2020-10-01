@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Form, message, Row, Select, Typography } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../util/util";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface Props {
   nextStep: () => void;
@@ -44,12 +44,14 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Prize Info</Title>
+      <Text>Please select the prizes you would like to be considered for.</Text>
       <Form
         name="prize"
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         layout="vertical"
         autoComplete="off"
+        style={{ marginTop: "10px" }}
       >
 
         <Row justify="center">

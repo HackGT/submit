@@ -18,6 +18,7 @@ export type Category = {
 
 export type Hackathon = {
     name: string;
+    image: string;
     isActive: boolean;
 }
 

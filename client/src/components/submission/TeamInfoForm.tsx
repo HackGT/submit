@@ -4,7 +4,7 @@ import { FORM_LAYOUT, FORM_RULES } from "../../util/util";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { User } from "../../types/types";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface Props {
   user: User;
@@ -44,6 +44,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Team Info</Title>
+      <Text>Please list the emails of all your team members. Please make sure the emails used are the ones that they were accepted for.</Text>
       <Form
         name="team"
         onFinish={onFinish}
@@ -51,6 +52,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
         layout="vertical"
         autoComplete="off"
         initialValues={formInitialValue}
+        style={{ marginTop: "10px" }}
       >
         <Form.List name="members">
           {(fields, { add, remove }) => (

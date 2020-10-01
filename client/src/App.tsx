@@ -43,7 +43,7 @@ const App: React.FC = () => {
           <Navigation user={user} />
         </Header>
         <Content id="wrapper">
-          <div style={{ background: "#fff", padding: "24px", flexGrow: 1 }}>
+          <div style={{ background: "#fff", padding: "24px", flex: "auto", display: "flex" }}>
             <Switch>
               <Route exact path="/" component={Dashboard} />
               <Route exact path="/create" render={() => <CreateSubmission user={user!} />} />

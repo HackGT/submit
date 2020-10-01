@@ -43,12 +43,16 @@ const CreateSubmission: React.FC<Props> = (props) => {
 
   return (
     <>
-      {renderForm(current)}
-      <Steps current={current} onChange={onChange}>
-        <Step key={0} title="Team Info" />
-        <Step key={1} title="Prize Info" />
-        <Step key={2} title="Devpost Info" />
-      </Steps>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
+        <div>
+          {renderForm(current)}
+        </div>
+        <Steps current={current} onChange={onChange} style={{ marginBottom: "16px" }}>
+          <Step key={0} title="Team Info" />
+          <Step key={1} title="Prize Info" />
+          <Step key={2} title="Devpost Info" />
+        </Steps>
+      </div>
     </>
   )
 }
