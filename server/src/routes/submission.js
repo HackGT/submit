@@ -1,4 +1,6 @@
 let {Team, User} = require('../schema')
+const express = require("express");
+
 let submissionRoutes = express.Router();
 const GRAPHQLURL = process.env.GRAPHQLURL || 'https://registration.hack.gt/graphql'
 /*
@@ -90,3 +92,5 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 submissionRoutes.route("/devpost-validation").post((req, res) => {
 
 })
+
+exports.submissionRoutes = submissionRoutes;

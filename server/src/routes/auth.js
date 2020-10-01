@@ -24,7 +24,7 @@ authRoutes.route("/login/callback").get((request, response, next) => {
     })(request, response, next);
 });
 
-authRoutes.route("/check").get((request, response, next) => {
+authRoutes.route("/check").get((request, response) => {
     if (request.user) {
         return response.status(200).json(request.user);
     } else {
