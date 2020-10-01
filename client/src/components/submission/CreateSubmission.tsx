@@ -35,9 +35,9 @@ const CreateSubmission: React.FC<Props> = (props) => {
       case 0:
         return <TeamInfoForm user={props.user} nextStep={nextStep} />
       case 1:
-        return <PrizeInfoForm />
+        return <PrizeInfoForm nextStep={nextStep} prevStep={prevStep} />
       case 2:
-        return <DevpostInfoForm />
+        return <DevpostInfoForm nextStep={nextStep} prevStep={prevStep} />
     }
   }
 
