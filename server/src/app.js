@@ -42,6 +42,8 @@ app.use("/submission", isAuthenticated, submissionRoutes)
 //     return await Category.find({});
 // })
 
+app.use("/public", isAuthenticated, express.static(path.join(__dirname, "/public")));
+
 // Serve React app
 app.use(isAuthenticated, express.static(path.join(__dirname, "../../client/build")));
 app.get("*", isAuthenticated, (request, response) => {

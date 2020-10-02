@@ -1,10 +1,10 @@
 import React from "react";
 import { Form, Row, Col, message, Input, Button, Typography } from "antd";
-import { FORM_RULES } from "../../util/util";
+import { FORM_LAYOUT, FORM_RULES } from "../../util/util";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { User } from "../../types/types";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface Props {
   user: User;
@@ -12,10 +12,6 @@ interface Props {
 }
 
 const TeamInfoForm: React.FC<Props> = (props) => {
-  const fullLayout = {
-    xs: 24, sm: 24, md: 16, lg: 12, xl: 12
-  };
-
   const onFinish = async (values: any) => {
     console.log("Form Success:", values);
     let emails: string[] = [];
@@ -48,20 +44,22 @@ const TeamInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Team Info</Title>
+      <Text>Please list the emails of all your team members. Please make sure the emails used are the ones that they were accepted for.</Text>
       <Form
-        name="create"
+        name="team"
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         layout="vertical"
         autoComplete="off"
         initialValues={formInitialValue}
+        style={{ marginTop: "10px" }}
       >
         <Form.List name="members">
           {(fields, { add, remove }) => (
             <div>
               {fields.map((field, index) => (
                 <Row justify="center" key={field.key}>
-                  <Col {...fullLayout}>
+                  <Col {...FORM_LAYOUT.full}>
                     <Form.Item
                       name={[field.name, "email"]}
                       fieldKey={[field.fieldKey, "email"]}
@@ -89,7 +87,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
               {/* Max team size is 4 */}
               {fields.length < 4 ? (
                 <Row justify="center">
-                  <Col {...fullLayout}>
+                  <Col {...FORM_LAYOUT.full}>
                     <Form.Item>
                       <Button type="dashed" onClick={add} block>
                         <PlusOutlined />
@@ -104,7 +102,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
         </Form.List>
 
         <Row justify="center">
-          <Col {...fullLayout}>
+          <Col {...FORM_LAYOUT.full}>
             <Form.Item>
               <Button type="primary" htmlType="submit">Next</Button>
             </Form.Item>

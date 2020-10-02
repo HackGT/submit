@@ -14,3 +14,9 @@ export const FORM_RULES = {
     message: "Please enter a valid email."
   } as Rule
 };
+
+export const FORM_LAYOUT = {
+  full: {
+    xs: 24, sm: 24, md: 16, lg: 12, xl: 12
+  }
+}
