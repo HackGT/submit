@@ -1,8 +1,9 @@
-let {Team, User} = require('../schema')
+let {Team, User, Submission} = require('../schema')
 const express = require("express");
+const request = require("request");
 
 let submissionRoutes = express.Router();
-const GRAPHQLURL = process.env.GRAPHQLURL || 'https://registration.hack.gt/graphql'
+const GRAPHQLURL = process.env.GRAPHQLURL || 'https://registration.2020.hack.gt/graphql'
 /*
     Form Step 1: Retrieve emails of users on team
     - Query emails from check-in and ensure users accepted to event
@@ -13,10 +14,24 @@ const GRAPHQLURL = process.env.GRAPHQLURL || 'https://registration.hack.gt/graph
     - errors
 */
 submissionRoutes.route("/team-validation").post(async (req, res) => {
-    const emails = req.body.emails
-    emails.forEach(email => {
-        let confirmed = false;
-        let name = "";
+    const emails = req.body.members
+    if(emails[0] == req.user.email) {
+        res.send({"error": true, "message": "Invalid body: email does not match"})
+        return;
+    }
+
+    let submission = null;
+    if(req.body.submissionId) {
+        submission = await Submission.findById(req.body.submissionId);
+    } else {
+        submissionObj = new Submission({
+            "emails": [],
+            "members": []
+        })
+        submission = await submissionObj.save();
+    }
+    let errConfirmed = null;
+    const userIds = await Promise.all(emails.map(async email => {
         const query = `
         query($search: String!) {
             search_user(search: $search, offset: 0, n: 1) {
@@ -43,27 +58,41 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
         };
 
         await request(options, (err, res, body) => {
-            if (err) { return console.log(err); }
-            if (JSON.parse(body).data.search_user.users.length > 0) {
-                confirmed = JSON.parse(body).data.search_user.users[0].confirmed;
-                name = JSON.parse(body).data.search_user.users[0].name;
+            if (err) { console.log(err); }
+            console.log(
+                JSON.parse(body).data.search_user.users[0]
+            )
+            let confirmed = false;
+            const users = JSON.parse(body).data.search_user.users
+            if (users.length > 0) {
+                confirmed = users[0].confirmed;
             }
-        });
-        if(!confirmed) {
-            res.send({"error": true, "message": "User: " + email + " not confirmed for HackGT 7"});
-        }
-        User.count({"email": email}, (err, count) {
-            if(err) {
-                console.log(err)
-                throw new Error(err);
-            }
-            if(count == 0) {
-                let new_user = new User({
-                    name: "Team " + user1._id + '' + user2._id,
-                })
+            if(!confirmed) {
+                errConfirmed = email;
+                return;
             }
         })
+
+        let updatedUser = await User.findOneAndUpdate({"email": email}, {
+            "$addToSet": {submissions: submission._id}
+        },{
+            new: true,
+            upsert: true
+        })
+        return updatedUser._id
+    }))
+    if(errConfirmed) {
+        res.send({"error": true, "message": "User: " + errConfirmed + " not confirmed for HackGT 7"});
+        return;
+    }
+    await Submission.findByIdAndUpdate(submission._id, {
+        "$set": {
+            members: userIds
+        }
     });
+    res.send({
+        "error": false, "submissionId": submission._id
+    })
 });
 
 /*

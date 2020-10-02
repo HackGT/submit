@@ -15,14 +15,12 @@ exports.createNew = (model, doc) => {
 exports.User = mongoose.model("User", new mongoose.Schema({
     uuid: {
         type: String,
-        required: true,
         index: true,
         unique: true
     },
     token: String,
     name: {
-        type: String,
-        required: true
+        type: String
     },
     email: {
         type: String,
@@ -34,7 +32,11 @@ exports.User = mongoose.model("User", new mongoose.Schema({
         ref: "Team"
     },
     admin: Boolean,
-    slack: String
+    slack: String,
+    submissions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Submission"
+    }]
 },
     {
         usePushEach: true
@@ -65,15 +67,22 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
 }));
 
 exports.Submission = mongoose.model("Submission", new mongoose.Schema({
-    devpost: String,
     categories: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        required: true
     }],
     hackathon: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Hackathon",
-        required: true
+    },
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        unique: true
+    }],
+    completed: {
+        type: Boolean,
+        required: false
     }
 }));

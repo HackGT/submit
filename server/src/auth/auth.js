@@ -1,6 +1,8 @@
 const { app } = require("../app.js");
+const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
+const MongoStore = require('connect-mongo')(session);
 const { User } = require("../schema.js");
 const { GroundTruthStrategy } = require("./strategies.js");
 
@@ -18,7 +20,10 @@ if (!session_secret) {
 app.use(session({
     secret: session_secret,
     saveUninitialized: false,
-    resave: true
+    resave: true,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
 }));
 
 app.use(passport.initialize());

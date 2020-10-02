@@ -12,6 +12,7 @@ exports.app = app;
 
 app.use(morgan("dev"));
 app.use(compression());
+app.use(express.json());
 app.use(cors());
 
 const { isAuthenticated } = require("./auth/auth.js");
