@@ -15,8 +15,7 @@ exports.createNew = (model, doc) => {
 exports.User = mongoose.model("User", new mongoose.Schema({
     uuid: {
         type: String,
-        index: true,
-        unique: true
+        index: true
     },
     token: String,
     name: {
@@ -72,14 +71,13 @@ exports.Submission = mongoose.model("Submission", new mongoose.Schema({
         ref: "Category",
     }],
     hackathon: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Hackathon",
+        type: String,
+        required: false,
     },
     members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
-        unique: true
     }],
     completed: {
         type: Boolean,

@@ -29,13 +29,14 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
     if (req.body.submissionId) {
         submission = await Submission.findById(req.body.submissionId);
     } else {
-        submissionObj = new Submission({
+        submission = new Submission({
             "emails": [],
-            "members": []
+            "members": [],
+            "hackathon": "HackGT7"
         })
-        submission = await submissionObj.save();
     }
     let errConfirmed = null;
+    let errSubmission = null;
     const userIds = await Promise.all(emails.map(async email => {
         console.log("hello",email)
         const query = `
@@ -72,23 +73,46 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
             errConfirmed = email;
             return;
         }
-        let updatedUser = await User.findOneAndUpdate({"email": email}, {
-            "$addToSet": {submissions: submission._id}
-        },{
-            new: true,
-            upsert: true
-        })
-        return updatedUser._id
+        let user = await User.findOne({"email": email}).populate('submissions');
+        if(user) {
+            for(var i = 0;i<user.submissions.length;i++) {
+                if(user.submissions[i].hackathon == 'HackGT7' &&
+                   user.submissions[i]._id.toString() != submission._id.toString()
+              ) {
+                    errSubmission = user.email
+                    return;
+                }
+            }
+        } else {
+            user = await User.create({
+                email: email,
+                submissions: []
+            })
+        }
+
+
+
+        return user._id
     }))
     if (errConfirmed) {
         res.send({"error": true, "message": "User: " + errConfirmed + " not confirmed for HackGT 7"});
         return;
     }
-    await Submission.findByIdAndUpdate(submission._id, {
-        "$set": {
-            members: userIds
-        }
-    });
+    if (errSubmission) {
+        res.send({"error": true, "message": "User: " + errSubmission + " already has an active submission"});
+        return;
+    }
+    submission["members"] = userIds
+    console.log(userIds)
+    await submission.save();
+    await User.update({"_id": {
+        "$in": userIds
+    }}, {
+        "$addToSet": { submissions: submission._id }
+    },{
+        "multi": true
+    })
+
     res.send({
         "error": false, "submissionId": submission._id
     })
