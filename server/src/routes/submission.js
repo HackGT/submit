@@ -16,16 +16,17 @@ const GRAPHQLURL = process.env.GRAPHQLURL || 'https://registration.2020.hack.gt/
 */
 submissionRoutes.route("/team-validation").post(async (req, res) => {
     const emails = req.body.members
-    if(emails[0] == req.user.email) {
+    if (emails[0] !== req.user.email) {
         res.send({"error": true, "message": "Invalid body: email does not match"})
         return;
     }
-    if(emails.length > 4) {
+
+    if (emails.length > 4) {
         res.send({"error": true, "message": "Too many members on team"})
         return;
     }
     let submission = null;
-    if(req.body.submissionId) {
+    if (req.body.submissionId) {
         submission = await Submission.findById(req.body.submissionId);
     } else {
         submissionObj = new Submission({
@@ -51,8 +52,7 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
         };
         const options = { method: 'POST',
             url: GRAPHQLURL,
-            headers:
-            {
+            headers: {
                 Authorization: 'Bearer ' + process.env.GRAPHQLAUTH,
                 'Content-Type': "application/json"
             },
@@ -67,7 +67,7 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
         if (users.length > 0) {
             confirmed = users[0].confirmed;
         }
-        if(!confirmed) {
+        if (!confirmed) {
             console.log("nah",email)
             errConfirmed = email;
             return;
@@ -80,7 +80,7 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
         })
         return updatedUser._id
     }))
-    if(errConfirmed) {
+    if (errConfirmed) {
         res.send({"error": true, "message": "User: " + errConfirmed + " not confirmed for HackGT 7"});
         return;
     }
@@ -120,5 +120,11 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 submissionRoutes.route("/devpost-validation").post((req, res) => {
 
 })
+
+
+submissionRoutes.route("/submission").get((req, res) => {
+
+});
+
 
 exports.submissionRoutes = submissionRoutes;
