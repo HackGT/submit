@@ -106,7 +106,7 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
 */
 submissionRoutes.route("/prize-validation").post((req, res) => {
 
-})
+});
 
 /*
     Form Step 3:
@@ -119,11 +119,21 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 */
 submissionRoutes.route("/devpost-validation").post((req, res) => {
 
-})
+});
 
 
-submissionRoutes.route("/submission").get((req, res) => {
+submissionRoutes.route("/submission/:submissionId").get(async (req, res) => {
+    try {
+        const submission = await Submission.findById(req.params.submissionId).populate("members");
 
+        if (!submission) {
+            return res.send({ error: true, message: "Submission not found: Invalid Id" });
+        }
+
+        return res.send({ error: false, submission: submission });
+    } catch {
+        return res.send({ error: true, message: "Submission not found: Invalid Id" });
+    }
 });
 
 
