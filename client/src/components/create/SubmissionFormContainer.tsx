@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Spin, Steps } from "antd";
+import React, { useState } from "react";
+import { Steps } from "antd";
 import TeamInfoForm from "./form/TeamInfoForm";
 import PrizeInfoForm from "./form/PrizeInfoForm";
 import DevpostInfoForm from "./form/DevpostInfoForm";
 import { User } from "../../types/types";
-import SubmissionDetails from "../submission/SubmissionDetails";
-import axios from "axios";
-import useAxios from "axios-hooks";
-import { useParams } from "react-router-dom";
 import LoadingDisplay from "../../util/LoadingDisplay";
-import ErrorDisplay from "../../util/ErrorDisplay";
 import ResultForm from "./form/ResultForm";
+import ReviewForm from "./form/ReviewForm";
 
 const { Step } = Steps;
 
@@ -54,36 +50,48 @@ const SubmissionFormContainer: React.FC<Props> = (props) => {
     return <LoadingDisplay />;
   }
 
-  if (data.error) {
-    return <ErrorDisplay error={data.message} />;
-  }
-
-  console.log(data);
+  // if (data.error) {
+  //   return <ErrorDisplay error={data.message} />;
+  // }
+  //
+  // console.log(data);
 
   const nextStep = () => {
-    if ([0, 1, 2].includes(current)) {
+    if ([0, 1, 2, 3].includes(current)) {
       setCurrent(current + 1);
     }
   }
 
   const prevStep = () => {
-    if ([1, 2].includes(current)) {
+    if ([1, 2, 3].includes(current)) {
       setCurrent(current - 1);
     }
+  }
+
+  // Ensures that all the data isn't overwritten, just the changed portions
+  const updateData = (updatedData: any) => {
+    setData({
+      ...data,
+      ...updatedData
+    });
   }
 
   const renderComponent = (current: number) => {
     switch (current) {
       case 0:
-        return <TeamInfoForm setData={setData} data={data} user={props.user} nextStep={nextStep} />
+        return <TeamInfoForm updateData={updateData} data={data} user={props.user} nextStep={nextStep} />
       case 1:
-        return <PrizeInfoForm setData={setData} data={data} nextStep={nextStep} prevStep={prevStep} />
+        return <PrizeInfoForm updateData={updateData} data={data} nextStep={nextStep} prevStep={prevStep} />
       case 2:
-        return <DevpostInfoForm setData={setData} data={data} nextStep={nextStep} prevStep={prevStep} />
+        return <DevpostInfoForm updateData={updateData} data={data} nextStep={nextStep} prevStep={prevStep} />
+      case 3:
+        return <ReviewForm updateData={updateData} data={data} nextStep={nextStep} prevStep={prevStep} />
       case 4:
         return <ResultForm />;
     }
   }
+
+  console.log(data);
 
   return (
     <>
@@ -95,6 +103,7 @@ const SubmissionFormContainer: React.FC<Props> = (props) => {
           <Step key={0} title="Team Info" />
           <Step key={1} title="Prize Info" />
           <Step key={2} title="Devpost Info" />
+          <Step key={3} title="Review" />
         </Steps>
       </div>
     </>

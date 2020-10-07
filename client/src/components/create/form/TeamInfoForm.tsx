@@ -9,7 +9,7 @@ const { Title, Text } = Typography;
 
 interface Props {
   data: any;
-  setData: React.Dispatch<any>;
+  updateData: React.Dispatch<any>;
   user: User;
   nextStep: () => void;
 }
@@ -17,33 +17,15 @@ interface Props {
 const TeamInfoForm: React.FC<Props> = (props) => {
   const onFinish = async (values: any) => {
     console.log("Form Success:", values);
-    let emails: string[] = [];
 
-    for (let member of values.members) {
-      emails.push(member.email);
-    }
-
-    // Error checking
-    if (emails.length === 0 || emails[0] !== props.user.email) {
-      throw new Error("Invalid emails list: " + emails);
-    }
-
-    let postData: any = {
-      members: emails
-    }
-
-    if (props.data.submission?._id) {
-      postData.submissionId = props.data.submission._id;
-    }
-
-    axios.post("/create/team-validation", postData)
+    axios.post("/submission/team-validation", values)
       .then((res) => {
         console.log(res.data);
 
         if (res.data.error) {
           message.error(res.data.message, 2);
         } else {
-          props.setData(res.data);
+          props.updateData(values);
           props.nextStep();
         }
       })
@@ -59,8 +41,8 @@ const TeamInfoForm: React.FC<Props> = (props) => {
 
   let formInitialValue = {};
 
-  if (props.data.submission.members && props.data.submission.members.length > 0) {
-    formInitialValue = props.data.submission;
+  if (props.data.members) {
+    formInitialValue = props.data;
   } else {
     formInitialValue = {
       members: [{

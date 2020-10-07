@@ -6,7 +6,7 @@ const { Title, Text } = Typography;
 
 interface Props {
   data: any;
-  setData: React.Dispatch<any>;
+  updateData: React.Dispatch<any>;
   nextStep: () => void;
   prevStep: () => void;
 }
@@ -15,10 +15,7 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
   const onFinish = async (values: any) => {
     console.log("Form Success:", values);
 
-    const prizes = values.prizes;
-
-    // TODO: Send query to server with prizes
-
+    props.updateData(values);
     props.nextStep();
   };
 
@@ -41,7 +38,9 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
       label: "NCR",
       value: 3
     }
-  ]
+  ];
+
+  let formInitialValue = props.data;
 
   return (
     <>
@@ -54,6 +53,7 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
         layout="vertical"
         autoComplete="off"
         style={{ marginTop: "10px" }}
+        initialValues={formInitialValue}
       >
 
         <Row justify="center">
