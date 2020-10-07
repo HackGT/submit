@@ -1,12 +1,15 @@
 import React from "react";
 import { Form, Row, Col, message, Input, Button, Typography } from "antd";
-import { FORM_LAYOUT, FORM_RULES } from "../../util/util";
+import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import { User } from "../../types/types";
+import { User } from "../../../types/types";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
 interface Props {
+  data: any;
+  setData: React.Dispatch<any>;
   user: User;
   nextStep: () => void;
 }
@@ -25,9 +28,28 @@ const TeamInfoForm: React.FC<Props> = (props) => {
       throw new Error("Invalid emails list: " + emails);
     }
 
-    // TODO: Send query to server with emails
+    let postData: any = {
+      members: emails
+    }
 
-    props.nextStep();
+    if (props.data.submission?._id) {
+      postData.submissionId = props.data.submission._id;
+    }
+
+    axios.post("/create/team-validation", postData)
+      .then((res) => {
+        console.log(res.data);
+
+        if (res.data.error) {
+          message.error(res.data.message, 2);
+        } else {
+          props.setData(res.data);
+          props.nextStep();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -35,10 +57,16 @@ const TeamInfoForm: React.FC<Props> = (props) => {
     console.log("Failed:", errorInfo);
   };
 
-  const formInitialValue = {
-    members: [{
-      email: props.user.email
-    }]
+  let formInitialValue = {};
+
+  if (props.data.submission.members && props.data.submission.members.length > 0) {
+    formInitialValue = props.data.submission;
+  } else {
+    formInitialValue = {
+      members: [{
+        email: props.user.email
+      }]
+    };
   }
 
   return (

@@ -1,10 +1,12 @@
 import React from "react";
 import { Button, Col, Form, message, Row, Select, Typography } from "antd";
-import { FORM_LAYOUT, FORM_RULES } from "../../util/util";
+import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 
 const { Title, Text } = Typography;
 
 interface Props {
+  data: any;
+  setData: React.Dispatch<any>;
   nextStep: () => void;
   prevStep: () => void;
 }
@@ -44,7 +46,7 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Prize Info</Title>
-      <Text>Please select the prizes you would like to be considered for.</Text>
+      <Text>Please select the prizes you would like to be considered for. Based on your team members, these are the only prizes you eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
       <Form
         name="prize"
         onFinish={onFinish}

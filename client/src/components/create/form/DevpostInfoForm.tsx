@@ -1,10 +1,12 @@
 import React from "react";
 import { Button, Col, Form, Input, message, Row, Typography } from "antd";
-import { FORM_LAYOUT, FORM_RULES } from "../../util/util";
+import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 
 const { Title, Text } = Typography;
 
 interface Props {
+  data: any;
+  setData: React.Dispatch<any>;
   nextStep: () => void;
   prevStep: () => void;
 }

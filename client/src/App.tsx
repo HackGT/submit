@@ -8,7 +8,8 @@ import { Layout, Spin } from 'antd';
 import Dashboard from "./components/dashboard/Dashboard";
 import Navigation from './components/navigation/Navigation';
 import AdminHome from './components/admin/AdminHome';
-import CreateSubmission from "./components/submission/CreateSubmission";
+import SubmissionFormContainer from "./components/create/SubmissionFormContainer";
+import NotFound from "./util/NotFound";
 
 const { Header, Content, Footer } = Layout;
 
@@ -46,8 +47,10 @@ const App: React.FC = () => {
           <div style={{ background: "#fff", padding: "24px", flex: "auto", display: "flex" }}>
             <Switch>
               <Route exact path="/" component={Dashboard} />
-              <Route exact path="/create" render={() => <CreateSubmission user={user!} />} />
+              <Route exact path="/create" render={() => <SubmissionFormContainer user={user!} />} />
+              <Route exact path="/submission/:submissionId" render={() => <SubmissionFormContainer user={user!} />} />
               <PrivateRoute exact path="/admin" component={AdminHome} user={user} />
+              <Route component={NotFound} />
             </Switch>
           </div>
         </Content>
