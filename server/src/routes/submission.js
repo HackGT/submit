@@ -130,7 +130,25 @@ submissionRoutes.route("/prizes").post(async (req, res) => {
     - errors
 */
 submissionRoutes.route("/devpost-validation").post((req, res) => {
+    res.send({ });
+});
 
+
+
+// Last step of the form, all the data is passed in here and a submission should be created
+submissionRoutes.route("/create").post(async (req, res) => {
+    const data = req.body.submission;
+
+    let submission = await Submission.create({
+        hackathon: CURRENT_HACKATHON,
+        devpost: data.devpost,
+        name: data.name,
+        members: await User.find({email: data.members.map(member => member.email)}),
+        prizes: []
+    });
+
+    console.log(req.body);
+    res.send("Done");
 });
 
 

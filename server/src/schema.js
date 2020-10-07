@@ -57,11 +57,18 @@ exports.Team = mongoose.model("Team", new mongoose.Schema({
 }));
 
 exports.Category = mongoose.model("Category", new mongoose.Schema({
-    name: String
+    name: String,
+    hackathon: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Hackathon"
+    }
 }));
 
 exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        required: true
+    },
     isActive: Boolean
 }));
 
@@ -72,15 +79,19 @@ exports.Submission = mongoose.model("Submission", new mongoose.Schema({
     }],
     hackathon: {
         type: String,
-        required: false,
+        required: true,
     },
     members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     }],
-    completed: {
-        type: Boolean,
-        required: false
+    devpost: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
     }
 }));
