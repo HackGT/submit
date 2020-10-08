@@ -57,7 +57,7 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
             method: 'POST',
             url: GRAPHQLURL,
             headers: {
-                "Authorization": 'Bearer ' + process.env.GRAPHQLAUTH,
+                "Authorization": 'Bearer ' + process.env.GRAPHQL_AUTH,
                 "Content-Type": "application/json"
             },
             data: JSON.stringify({
