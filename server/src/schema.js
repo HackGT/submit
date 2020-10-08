@@ -26,10 +26,6 @@ exports.User = mongoose.model("User", new mongoose.Schema({
         required: true,
         unique: true
     },
-    team: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Team"
-    },
     admin: Boolean,
     slack: String,
     submissions: [{
@@ -60,7 +56,8 @@ exports.Category = mongoose.model("Category", new mongoose.Schema({
     name: String,
     hackathon: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Hackathon"
+        ref: "Hackathon",
+        required: true
     }
 }));
 
