@@ -1,8 +1,6 @@
 import React from "react";
 import { Form, Row, Col, message, Input, Button, Typography, Select } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import { User } from "../../../types/types";
 import axios from "axios";
 
 const { Title, Text } = Typography;
@@ -25,7 +23,7 @@ const ReviewForm: React.FC<Props> = (props) => {
         if (res.data.error) {
           message.error(res.data.message, 2);
         } else {
-          // props.nextStep();
+          props.nextStep();
         }
       })
       .catch((err) => {
@@ -35,26 +33,9 @@ const ReviewForm: React.FC<Props> = (props) => {
 
   const onFinishFailed = (errorInfo: any) => {
     message.error("Please complete the required fields.", 2);
-    console.log("Failed:", errorInfo);
   };
 
   let formInitialValue = props.data;
-
-  // TODO: Get prize options from server
-  const prizeOptions = [
-    {
-      label: "General Hacker",
-      value: 1
-    },
-    {
-      label: "Emerging Hacker",
-      value: 2
-    },
-    {
-      label: "NCR",
-      value: 3
-    }
-  ];
 
   return (
     <>
@@ -97,7 +78,7 @@ const ReviewForm: React.FC<Props> = (props) => {
               rules={[FORM_RULES.requiredRule]}
               label="Prizes"
             >
-              <Select disabled={true} mode="multiple" options={prizeOptions} showSearch optionFilterProp="label" />
+              <Select disabled={true} mode="multiple" showSearch optionFilterProp="label" />
             </Form.Item>
           </Col>
         </Row>

@@ -1,56 +1,28 @@
 import React from "react";
-import { ConfigProvider, List, Empty, Card } from "antd";
-import { Submission } from "../../types/types";
+import { ConfigProvider, List, Empty, Card, Typography } from "antd";
+import useAxios from "axios-hooks";
+import LoadingDisplay from "../../util/LoadingDisplay";
+import ErrorDisplay from "../../util/ErrorDisplay";
 import { Link } from "react-router-dom";
 
 const { Meta } = Card;
+const { Title } = Typography;
 
 const Dashboard: React.FC = () => {
 
-  // TODO: Get user's submissions from server
+  const [{ data, loading, error }] = useAxios("/submission/dashboard");
 
-  const submissionsData = [
-    {
-      name: "Test name",
-      hackathon: {
-        name: "HackGT 7",
-        image: "/public/hackgt7.jpg"
-      },
-      members: [
-        {
-          name: "Ayush Goyal"
-        },
-        {
-          name: "Michael Raman"
-        },
-        {
-          name: "Rahul Rajan"
-        }
-      ]
-    },
-    {
-      name: "Test name",
-      hackathon: {
-        name: "HackGT 7",
-        image: "/public/hackgt7.jpg"
-      },
-      members: [
-        {
-          name: "Ayush Goyal"
-        },
-        {
-          name: "Michael Raman"
-        },
-        {
-          name: "Rahul Rajan"
-        }
-      ]
-    }
-  ]
+  if (loading) {
+    return <LoadingDisplay />;
+  }
 
+  if (error) {
+    return <ErrorDisplay error={data.message} />;
+  }
 
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+      <Title level={2}>Your Submissions</Title>
       <ConfigProvider
         renderEmpty={() => (
           <Empty description="You have no past Submissions" />
@@ -58,12 +30,11 @@ const Dashboard: React.FC = () => {
       >
         <List
           grid={{ gutter: 32, xs: 1, sm: 2, md: 2, lg: 3, xl: 4, xxl: 5 }}
-          dataSource={submissionsData}
+          dataSource={data}
           renderItem={(submission: any) => (
             <List.Item>
-              {/* TODO: Fill in link */}
-              <Link to="/">
-                <Card title={submission.hackathon.name} cover={ <img alt="" src={submission.hackathon.image} /> } hoverable>
+              <Link to={"/submission/" + submission._id}>
+                <Card title={submission.hackathon} cover={<img alt="" src="/public/hackgt7.jpg" />} hoverable>
                   <Meta
                     title={submission.name}
                     description={submission.members.map((item: any) => item.name).join(', ')}
@@ -74,7 +45,7 @@ const Dashboard: React.FC = () => {
           )}
         />
       </ConfigProvider>
-    </>
+    </div>
   )
 }
 

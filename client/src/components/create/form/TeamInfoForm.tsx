@@ -25,7 +25,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
         if (res.data.error) {
           message.error(res.data.message, 2);
         } else {
-          props.updateData(values);
+          props.updateData({ ...values, eligiblePrizes: res.data.eligiblePrizes });
           props.nextStep();
         }
       })
@@ -36,7 +36,6 @@ const TeamInfoForm: React.FC<Props> = (props) => {
 
   const onFinishFailed = (errorInfo: any) => {
     message.error("Please complete the required fields.", 2);
-    console.log("Failed:", errorInfo);
   };
 
   let formInitialValue = {};
@@ -54,7 +53,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Team Info</Title>
-      <Text>Please list the emails of all your team members. Please make sure the emails used are the ones that they were accepted for.</Text>
+      <Text>List the emails of all your team members. Please make sure the emails used are the ones that they were accepted for.</Text>
       <Form
         name="team"
         onFinish={onFinish}

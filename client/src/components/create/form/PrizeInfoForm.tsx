@@ -21,31 +21,22 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
 
   const onFinishFailed = (errorInfo: any) => {
     message.error("Please complete the required fields.", 2);
-    console.log("Failed:", errorInfo);
   };
 
   // TODO: Get prize options from server
-  const prizeOptions = [
-    {
-      label: "General Hacker",
-      value: 1
-    },
-    {
-      label: "Emerging Hacker",
-      value: 2
-    },
-    {
-      label: "NCR",
-      value: 3
+  const prizeOptions = props.data.eligiblePrizes.map((prize: string) => {
+    return {
+      label: prize,
+      value: prize
     }
-  ];
+  })
 
   let formInitialValue = props.data;
 
   return (
     <>
       <Title level={2}>Prize Info</Title>
-      <Text>Please select the prizes you would like to be considered for. Based on your team members, these are the only prizes you eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
+      <Text>Please select the prizes (categories) you would like to be considered for. Based on your team members, these are the only prizes you eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
       <Form
         name="prize"
         onFinish={onFinish}

@@ -10,6 +10,7 @@ import Navigation from './components/navigation/Navigation';
 import AdminHome from './components/admin/AdminHome';
 import SubmissionFormContainer from "./components/create/SubmissionFormContainer";
 import NotFound from "./util/NotFound";
+import SubmissionDetails from "./components/submission/SubmissionDetails";
 
 const { Header, Content, Footer } = Layout;
 
@@ -48,7 +49,7 @@ const App: React.FC = () => {
             <Switch>
               <Route exact path="/" component={Dashboard} />
               <Route exact path="/create" render={() => <SubmissionFormContainer user={user!} />} />
-              <Route exact path="/submission/:submissionId" render={() => <SubmissionFormContainer user={user!} />} />
+              <Route exact path="/submission/:submissionId" render={() => <SubmissionDetails />} />
               <PrivateRoute exact path="/admin" component={AdminHome} user={user} />
               <Route component={NotFound} />
             </Switch>

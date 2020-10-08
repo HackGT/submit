@@ -34,7 +34,6 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
 
   const onFinishFailed = (errorInfo: any) => {
     message.error("Please complete the required fields.", 2);
-    console.log("Failed:", errorInfo);
   };
 
   let formInitialValue = props.data;
