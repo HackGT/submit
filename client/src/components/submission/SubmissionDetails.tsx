@@ -20,8 +20,9 @@ const SubmissionDetails: React.FC = (props) => {
     return <LoadingDisplay />;
   }
 
-  if (data.error || error) {
-    return <ErrorDisplay error={data.message} />;
+  if (data.error) {
+    console.error(data.error);
+    return <ErrorDisplay />;
   }
 
   // <List

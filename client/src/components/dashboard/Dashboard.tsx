@@ -9,15 +9,15 @@ const { Meta } = Card;
 const { Title } = Typography;
 
 const Dashboard: React.FC = () => {
-
-  const [{ data, loading, error }] = useAxios("/submission/dashboard");
+  const [{ data, loading }] = useAxios("/submission/dashboard", { useCache: false });
 
   if (loading) {
     return <LoadingDisplay />;
   }
 
-  if (error) {
-    return <ErrorDisplay error={data.message} />;
+  if (data.error) {
+    console.error(data.error);
+    return <ErrorDisplay />;
   }
 
   return (

@@ -14,11 +14,11 @@ interface Props {
 
 const DevpostInfoForm: React.FC<Props> = (props) => {
   const onFinish = async (values: any) => {
-    console.log("Form Success:", values);
+    const hide = message.loading("Loading...", 0);
 
     axios.post("/submission/devpost-validation", values)
       .then((res) => {
-        console.log(res.data);
+        hide();
 
         if (res.data.error) {
           message.error(res.data.message, 2);
@@ -28,6 +28,8 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
         }
       })
       .catch((err) => {
+        hide();
+        message.error("Error: Please ask for help", 2);
         console.log(err);
       });
   };

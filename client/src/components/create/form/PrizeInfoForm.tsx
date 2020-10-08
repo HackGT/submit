@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Col, Form, message, Row, Select, Typography } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
@@ -13,17 +14,30 @@ interface Props {
 
 const PrizeInfoForm: React.FC<Props> = (props) => {
   const onFinish = async (values: any) => {
-    console.log("Form Success:", values);
+    const hide = message.loading("Loading...", 0);
 
-    props.updateData(values);
-    props.nextStep();
+    axios.post("/submission/prize-validation", values)
+      .then((res) => {
+        hide();
+
+        if (res.data.error) {
+          message.error(res.data.message, 2);
+        } else {
+          props.updateData(values);
+          props.nextStep();
+        }
+      })
+      .catch((err) => {
+        hide();
+        message.error("Error: Please ask for help", 2);
+        console.log(err);
+      });
   };
 
   const onFinishFailed = (errorInfo: any) => {
     message.error("Please complete the required fields.", 2);
   };
 
-  // TODO: Get prize options from server
   const prizeOptions = props.data.eligiblePrizes.map((prize: string) => {
     return {
       label: prize,

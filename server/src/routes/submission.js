@@ -148,7 +148,7 @@ getEligiblePrizes = (users) => {
     - errors
 */
 submissionRoutes.route("/prize-validation").post((req, res) => {
-
+    res.send({});
 });
 
 
@@ -162,7 +162,7 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
     - errors
 */
 submissionRoutes.route("/devpost-validation").post((req, res) => {
-    res.send({ });
+    res.send({});
 });
 
 
