@@ -27,11 +27,7 @@ exports.User = mongoose.model("User", new mongoose.Schema({
         unique: true
     },
     admin: Boolean,
-    slack: String,
-    submissions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Submission"
-    }]
+    slack: String
 },
     {
         usePushEach: true
@@ -70,10 +66,7 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
 }));
 
 exports.Submission = mongoose.model("Submission", new mongoose.Schema({
-    categories: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
-    }],
+    categories: [String],
     hackathon: {
         type: String,
         required: true,

@@ -1,4 +1,5 @@
-let { Team, User, Submission } = require('../schema')
+const { Team, User, Submission } = require("../schema");
+const { config } = require("../common");
 const express = require("express");
 const request = require("request");
 const axios = require("axios")
@@ -34,12 +35,14 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
     let errConfirmed = null;
     let errSubmission = null;
 
-    const userIds = await Promise.all(emails.map(async email => {
+    const registrationUsers = await Promise.all(emails.map(async email => {
         const query = `
             query($search: String!) {
                 search_user(search: $search, offset: 0, n: 1) {
                     users {
                         name
+                        email
+                        confirmationBranch
                         confirmed
                     }
                 }
@@ -64,26 +67,33 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
         };
 
         const res = await axios(options);
-        const users = res.data.data.search_user.users;
+        const registrationUsers = res.data.data.search_user.users;
 
-        if (users.length === 0 || !users[0].confirmed) {
+        if (registrationUsers.length === 0 || !registrationUsers[0].confirmed) {
             errConfirmed = email;
             return;
         }
 
-        let user = await User.findOne({ "email": email }).populate('submissions');
+        let user = await User.findOne({ "email": email });
 
         if (!user) {
-            user = await User.create({
-                email: email,
-                submissions: []
+            await User.create({
+                name: registrationUsers[0].name,
+                email: email
             });
-        } else if (user.submissions.map(submission => submission.hackathon).includes(CURRENT_HACKATHON)) {
-            errSubmission = user.email
-            return;
+        } else {
+            try {
+                const submissions = await Submission.find({ members: user, hackathon: CURRENT_HACKATHON });
+                if (submissions.length > 0) {
+                    errSubmission = user.email
+                    return;
+                }
+            } catch (err) {
+                console.error(err);
+            }
         }
 
-        return user._id
+        return registrationUsers[0];
     }))
 
     if (errConfirmed) {
@@ -93,10 +103,39 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
         return res.send({"error": true, "message": "User: " + errSubmission + " already has a submission for " + CURRENT_HACKATHON});
     }
 
-    console.log(userIds)
+    const eligiblePrizes = getEligiblePrizes(registrationUsers);
 
-    return res.send({ error: false });
+    console.log(eligiblePrizes);
+
+    return res.send({ error: false, eligiblePrizes });
 });
+
+
+getEligiblePrizes = (users) => {
+    switch (CURRENT_HACKATHON) {
+        case "HackGT 7":
+
+            let numEmerging = 0;
+
+            users.forEach(user => {
+                if (!user.confirmationBranch) {
+                    return res.send({"error": true, "message": "User: " + user.email + " does not have a confirmation branch"});
+                }
+
+                if (user.confirmationBranch === "Emerging Participant Confirmation") {
+                    numEmerging++;
+                }
+            });
+
+            // A team must be all emerging to be eligible for emerging prizes
+            if (numEmerging === users.length) {
+                return config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
+            }
+            return config.hackathons["HackGT 7"].sponsorPrizes;
+        default:
+            return [];
+    }
+}
 
 /*
     Form Step 2:
@@ -112,13 +151,6 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 
 });
 
-
-/*
-    Route to get prizes for a particular create, should be different for each hackathon
- */
-submissionRoutes.route("/prizes").post(async (req, res) => {
-    // TODO: Make registration requests to get confirmation branch of participants and filter out prizes from there
-})
 
 /*
     Form Step 3:
@@ -144,7 +176,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
         devpost: data.devpost,
         name: data.name,
         members: await User.find({email: data.members.map(member => member.email)}),
-        prizes: []
+        categories: data.prizes
     });
 
     console.log(req.body);
@@ -169,6 +201,15 @@ submissionRoutes.route("/submission/:submissionId").get(async (req, res) => {
         return res.send({ error: true, message: "Submission not found: Invalid Id" });
     }
 });
+
+submissionRoutes.route("/dashboard").get(async (req, res) => {
+    try {
+        return res.send(await Submission.find({ members: req.user._id }).populate("members"));
+    } catch (err) {
+        console.error(err);
+        return res.send({ error: true, message: err.message });
+    }
+})
 
 
 exports.submissionRoutes = submissionRoutes;

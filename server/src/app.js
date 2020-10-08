@@ -15,6 +15,11 @@ app.use(compression());
 app.use(express.json());
 app.use(cors());
 
+// Throw and show a stack trace on an unhandled Promise rejection instead of logging an unhelpful warning
+process.on("unhandledRejection", err => {
+    throw err;
+});
+
 const { isAuthenticated } = require("./auth/auth.js");
 
 const { authRoutes } = require("./routes/auth.js");

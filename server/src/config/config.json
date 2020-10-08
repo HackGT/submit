@@ -1,0 +1,19 @@
+{
+  "hackathons": {
+    "HackGT 7": {
+      "emergingPrizes": [
+        "Most Impactful",
+        "Most Creative",
+        "Best Design",
+        "Best Web Development Track",
+        "Best Data Science Track",
+        "Best Video Game Development",
+        "Best Mobile App Development"
+      ],
+      "sponsorPrizes": [
+        "NCR",
+        "Blackrock"
+      ]
+    }
+  }
+}
