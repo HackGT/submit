@@ -119,6 +119,9 @@ validateTeam = async (members, user_email) => {
 
 }
 validateDevpost = async (devpost_url) => {
+    if(!devpost_url) {
+        return {"error": true, "message": "No url specified"}
+    }
     const hostname = new URL(devpost_url).hostname
     if(hostname != "devpost.com") {
         return {"error": true, "message": "Invalid URL: Not devpost domain"}
@@ -132,7 +135,7 @@ validateDevpost = async (devpost_url) => {
 
     const $ = cheerio.load(html)
     devpost_urls = []
-    var submitted = true
+    var submitted = false
     $('#submissions').find('ul').children("li").each((index, elem) => {
         const item = $(elem).find("div a").attr("href")
         if(item) {
@@ -215,6 +218,9 @@ submissionRoutes.route("/devpost-validation").post(async (req, res) => {
 
 // Last step of the form, all the data is passed in here and a submission should be created
 submissionRoutes.route("/create").post(async (req, res) => {
+    if(!req.body.submission) {
+        return res.send({error: true, messsag: "Invalid submission"})
+    }
     const data = req.body.submission;
     const teamValidation = await validateTeam(data.members, req.user.email)
     if(teamValidation.error) {
