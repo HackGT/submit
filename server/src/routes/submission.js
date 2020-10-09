@@ -24,8 +24,11 @@ const HACKGT_DEVPOST = "https://hackgt2020.devpost.com/"
     - errors
 */
 submissionRoutes.route("/team-validation").post(async (req, res) => {
-    const members = req.body.members;
+    const resp = await validateTeam(req.body.members, req.user.email)
+    return res.send(resp);
+});
 
+validateTeam = async (members, user_email) => {
     if (!members || members.length === 0) {
         return res.send({"error": true, "message": "Must include at least one member"});
     } else if (members.length > 4) {
@@ -33,9 +36,8 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
     }
 
     const emails = members.map(member => member.email);
-
-    if (emails[0] !== req.user.email) {
-        return res.send({"error": true, "message": "Email does not match current user"})
+    if (emails[0] !== user_email) {
+        return {"error": true, "message": "Email does not match current user"}
     }
 
     let errConfirmed = null;
@@ -103,19 +105,54 @@ submissionRoutes.route("/team-validation").post(async (req, res) => {
     }))
 
     if (errConfirmed) {
-        return res.send({"error": true, "message": "User: " + errConfirmed + " not confirmed for " + CURRENT_HACKATHON});
+        return {"error": true, "message": "User: " + errConfirmed + " not confirmed for " + CURRENT_HACKATHON};
     }
     if (errSubmission) {
-        return res.send({"error": true, "message": "User: " + errSubmission + " already has a submission for " + CURRENT_HACKATHON});
+        return {"error": true, "message": "User: " + errSubmission + " already has a submission for " + CURRENT_HACKATHON};
     }
 
     const eligiblePrizes = getEligiblePrizes(registrationUsers);
 
     console.log(eligiblePrizes);
 
-    return res.send({ error: false, eligiblePrizes });
-});
+    return { error: false, eligiblePrizes };
 
+}
+validateDevpost = async (devpost_url) => {
+    const hostname = new URL(devpost_url).hostname
+    if(hostname != "devpost.com") {
+        return {"error": true, "message": "Invalid URL: Not devpost domain"}
+    }
+    let html = ""
+    try {
+        html = await rp(devpost_url);
+    } catch(err) {
+        return {"error": true, "message": "Invalid Project URL"}
+    }
+
+    const $ = cheerio.load(html)
+    devpost_urls = []
+    var submitted = true
+    $('#submissions').find('ul').children("li").each((index, elem) => {
+        const item = $(elem).find("div a").attr("href")
+        if(item) {
+            devpost_urls.push(item)
+            if(item == HACKGT_DEVPOST) {
+                submitted = true;
+            }
+        }
+    })
+    var eligible = submitted && (devpost_urls.length == 1)
+    if(eligible) {
+        return {"error": false}
+    }
+    else if(!submitted) {
+        return {"error": true, "message": "Project not submitted to HackGT 7 Devpost"};
+    }
+    else if(!(devpost_urls.length > 1)) {
+        return {"error": true, "message": "Project submitted to multiple hackathons"};
+    }
+}
 
 getEligiblePrizes = (users) => {
     switch (CURRENT_HACKATHON) {
@@ -170,39 +207,8 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 */
 submissionRoutes.route("/devpost-validation").post(async (req, res) => {
     const devpost_url = req.body.devpost;
-    const hostname = new URL(devpost_url).hostname
-    if(hostname != "devpost.com") {
-        return res.send({"error": true, "message": "Invalid URL: Not devpost domain"})
-    }
-    let html = ""
-    try {
-        html = await rp(devpost_url);
-    } catch(err) {
-        return res.send({"error": true, "message": "Invalid Project URL"})
-    }
-
-    const $ = cheerio.load(html)
-    devpost_urls = []
-    var submitted = false
-    $('#submissions').find('ul').children("li").each((index, elem) => {
-        const item = $(elem).find("div a").attr("href")
-        if(item) {
-            devpost_urls.push(item)
-            if(item == HACKGT_DEVPOST) {
-                submitted = true;
-            }
-        }
-    })
-    var eligible = submitted && (devpost_urls.length == 1)
-    if(eligible) {
-        return res.send({"error": false})
-    }
-    else if(!submitted) {
-        return res.send({"error": true, "message": "Project not submitted to HackGT 7 Devpost"});
-    }
-    else if(!(devpost_urls.length > 1)) {
-        return res.send({"error": true, "message": "Project submitted to multiple hackathons"});
-    }
+    const resp = await validateDevpost(devpost_url)
+    return res.send(resp)
 });
 
 
@@ -210,7 +216,14 @@ submissionRoutes.route("/devpost-validation").post(async (req, res) => {
 // Last step of the form, all the data is passed in here and a submission should be created
 submissionRoutes.route("/create").post(async (req, res) => {
     const data = req.body.submission;
-
+    const teamValidation = await validateTeam(data.members, req.user.email)
+    if(teamValidation.error) {
+        return res.send({error: true, messsage: "Invalid team"})
+    }
+    const devpostValidation = await validateDevpost(data.devpost)
+    if(devpostValidation.error) {
+        return res.send({error: true, messsage: "Invalid devpost submission"})
+    }
     let submission = await Submission.create({
         hackathon: CURRENT_HACKATHON,
         devpost: data.devpost,
