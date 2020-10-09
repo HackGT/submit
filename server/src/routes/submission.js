@@ -127,8 +127,8 @@ getEligiblePrizes = (users) => {
                 }
             });
 
-            // A team must be all emerging to be eligible for emerging prizes
-            if (numEmerging === users.length) {
+            // A team must be greater than 50% emerging to be eligible for emerging prizes
+            if (numEmerging / users.length > 0.5) {
                 return config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
             }
             return config.hackathons["HackGT 7"].sponsorPrizes;
