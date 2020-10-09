@@ -170,12 +170,20 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 */
 submissionRoutes.route("/devpost-validation").post(async (req, res) => {
     const devpost_url = req.body.devpost;
-    const html = await rp(devpost_url);
-    // var parser = new soup(html)
+    const hostname = new URL(devpost_url).hostname
+    if(hostname != "devpost.com") {
+        return res.send({"error": true, "message": "Invalid URL: Not devpost domain"})
+    }
+    let html = ""
+    try {
+        html = await rp(devpost_url);
+    } catch(err) {
+        return res.send({"error": true, "message": "Invalid Project URL"})
+    }
+
     const $ = cheerio.load(html)
     devpost_urls = []
     var submitted = false
-
     $('#submissions').find('ul').children("li").each((index, elem) => {
         const item = $(elem).find("div a").attr("href")
         if(item) {
@@ -188,9 +196,11 @@ submissionRoutes.route("/devpost-validation").post(async (req, res) => {
     var eligible = submitted && (devpost_urls.length == 1)
     if(eligible) {
         return res.send({"error": false})
-    } else if(!submitted) {
+    }
+    else if(!submitted) {
         return res.send({"error": true, "message": "Project not submitted to HackGT 7 Devpost"});
-    } else if(!(devpost_urls.length == 1)) {
+    }
+    else if(!(devpost_urls.length > 1)) {
         return res.send({"error": true, "message": "Project submitted to multiple hackathons"});
     }
 });
