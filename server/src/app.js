@@ -4,7 +4,6 @@ const compression = require("compression");
 const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const { User, Team, Category, Submission } = require("./schema")
 dotenv.config();
 
 let app = express();

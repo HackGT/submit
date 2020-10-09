@@ -1,12 +1,18 @@
+
 const { Team, User, Submission } = require("../schema");
 const { config } = require("../common");
 const express = require("express");
 const request = require("request");
 const axios = require("axios")
+var rp = require("request-promise")
+var soup = require('jssoup').default;
+const cheerio = require('cheerio')
 
 let submissionRoutes = express.Router();
 const GRAPHQLURL = process.env.GRAPHQLURL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
+const HACKGT_DEVPOST = "https://hackgt2020.devpost.com/"
+
 
 /*
     Form Step 1: Retrieve emails of users on team
@@ -152,6 +158,7 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 });
 
 
+
 /*
     Form Step 3:
     - Get devpost url
@@ -161,8 +168,31 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
     Response:
     - errors
 */
-submissionRoutes.route("/devpost-validation").post((req, res) => {
-    res.send({});
+submissionRoutes.route("/devpost-validation").post(async (req, res) => {
+    const devpost_url = req.body.devpost;
+    const html = await rp(devpost_url);
+    // var parser = new soup(html)
+    const $ = cheerio.load(html)
+    devpost_urls = []
+    var submitted = false
+
+    $('#submissions').find('ul').children("li").each((index, elem) => {
+        const item = $(elem).find("div a").attr("href")
+        if(item) {
+            devpost_urls.push(item)
+            if(item == HACKGT_DEVPOST) {
+                submitted = true;
+            }
+        }
+    })
+    var eligible = submitted && (devpost_urls.length == 1)
+    if(eligible) {
+        return res.send({"error": false})
+    } else if(!submitted) {
+        return res.send({"error": true, "message": "Project not submitted to HackGT 7 Devpost"});
+    } else if(!(devpost_urls.length == 1)) {
+        return res.send({"error": true, "message": "Project submitted to multiple hackathons"});
+    }
 });
 
 
