@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo')(session);
 const { User } = require("../schema.js");
 const { GroundTruthStrategy } = require("./strategies.js");
 
+// https://stackoverflow.com/questions/40459511/in-express-js-req-protocol-is-not-picking-up-https-for-my-secure-link-it-alwa
 if (process.env.PRODUCTION === 'true') {
     app.enable("trust proxy");
 }
