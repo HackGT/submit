@@ -10,7 +10,7 @@ FROM node:12-alpine
 
 WORKDIR /usr/src/submit
 COPY ./server/ /usr/src/submit/server/
-COPY --from=build /usr/src/submit/client/ /user/src/submit/client
+COPY --from=build /usr/src/submit/client/ /usr/src/submit/client
 
 EXPOSE 3000
 
