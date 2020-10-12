@@ -3,7 +3,8 @@ const { config } = require("../common");
 const express = require("express");
 const axios = require("axios");
 const rp = require("request-promise");
-const cheerio = require('cheerio');
+const cheerio = require("cheerio");
+const { DateTime } = require("luxon");
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
@@ -49,7 +50,7 @@ validateTeam = async (members, user_email) => {
             search: email
         };
 
-        const options = {
+        const res = await axios({
             method: 'POST',
             url: GRAPHQL_URL,
             headers: {
@@ -60,9 +61,8 @@ validateTeam = async (members, user_email) => {
                 query,
                 variables
             })
-        };
+        });
 
-        const res = await axios(options);
         const registrationUsers = res.data.data.search_user.users;
 
         if (registrationUsers.length === 0 || !registrationUsers[0].confirmed) {
@@ -217,15 +217,34 @@ submissionRoutes.route("/create").post(async (req, res) => {
         return res.send({ error: true, message: "Invalid devpost submission" })
     }
 
+    const resp = await axios({
+        method: 'POST',
+        url: "https://api.whereby.dev/v1/meetings",
+        headers: {
+            "Authorization": 'Bearer ' + process.env.WHEREBY_KEY,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify({
+            isLocked: true,
+            roomNamePrefix: "/expo-",
+            roomMode: "group",
+            startDate: DateTime.local().plus({ hours: 1 }).toISO(),
+            endDate: DateTime.local().plus({ hours: 12 }).toISO(),
+            fields: [ "hostRoomUrl" ]
+        })
+    });
+
     try {
         await Submission.create({
             hackathon: CURRENT_HACKATHON,
             devpost: data.devpost,
             name: data.name,
             members: await User.find({ email: data.members.map(member => member.email) }),
-            categories: data.prizes
+            categories: data.prizes,
+            wherebyRoom: resp.data
         });
     } catch (err) {
+        console.error(err);
         return res.send({ error: true, message: "Submission could not be saved - please contact help desk" });
     }
 

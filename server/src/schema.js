@@ -83,5 +83,12 @@ exports.Submission = mongoose.model("Submission", new mongoose.Schema({
     name: {
         type: String,
         required: true
+    },
+    wherebyRoom: {
+        meetingId: String,
+        roomUrl: String,
+        hostRoomUrl: String,
+        startDate: String,
+        endDate: String
     }
 }));
