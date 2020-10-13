@@ -1,5 +1,5 @@
 import React from "react";
-import { Descriptions, Typography } from "antd";
+import { Descriptions, Typography, Alert } from "antd";
 import { useParams } from "react-router-dom";
 import useAxios from "axios-hooks";
 import LoadingDisplay from "../../util/LoadingDisplay";
@@ -14,7 +14,7 @@ const Label: React.FC<{ name: string }> = ({ name }) => {
 const SubmissionDetails: React.FC = (props) => {
   const { submissionId } = useParams();
 
-  const [{ data, loading, error }] = useAxios("/submission/submission/" + submissionId);
+  const [{ data, loading }] = useAxios("/submission/submission/" + submissionId);
 
   if (loading) {
     return <LoadingDisplay />;
@@ -25,21 +25,37 @@ const SubmissionDetails: React.FC = (props) => {
     return <ErrorDisplay />;
   }
 
-  // <List
-  //   dataSource={props.submissionData.members}
-  //   renderItem={(member: any) => (
-  //     <List.Item>
-  //       <Text>
-  //         <UserOutlined style={{ marginRight: "5px" }} />
-  //         {member.name}
-  //       </Text>
-  //     </List.Item>
-  //   )}
-  // />
+  const createMessage = () => {
+    switch (data.submission.round) {
+      case "FLAGGED":
+      case "SUBMITTED":
+        return <Alert
+          message="Thank you for your submission to HackGT 7! Please check back later to see your submission status."
+          type="info"
+          showIcon
+        />;
+      case "ACCEPTED":
+        return <Alert
+          message={
+            <Text>Congrats on moving to the next round! Here is the video link for you to join the judging call: <a href={data.submission.wherebyRoom.hostRoomUrl} target="_blank">Join Here</a></Text>}
+          type="success"
+          showIcon
+        />;
+      case "REJECTED":
+        return <Alert
+          message="After reviewing your submission in round 1, you will not be eligible for live judging. However, you can still win emerging prizes if you are an emerging team, so look out for the prizes at closing ceremonies!"
+          type="info"
+          showIcon
+        />;
+      default:
+        return null;
+    }
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-      <Title level={2} style={{marginBottom: "30px"}}>{data.submission.hackathon} Submission Details</Title>
+      {createMessage()}
+      <Title level={2} style={{ margin: "30px 0" }}>{data.submission.hackathon} Submission Details</Title>
       <Descriptions layout="vertical">
         <Descriptions.Item label={<Label name="Name" />}>{data.submission.name}</Descriptions.Item>
         <Descriptions.Item label={<Label name="Emails" />}>{data.submission.members.map((item: any) => item.email).join(', ')}</Descriptions.Item>
