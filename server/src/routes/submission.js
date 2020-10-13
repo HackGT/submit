@@ -5,6 +5,9 @@ const axios = require("axios");
 const rp = require("request-promise");
 const cheerio = require("cheerio");
 const { DateTime } = require("luxon");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
@@ -25,6 +28,7 @@ validateTeam = async (members, user_email) => {
     }
 
     const emails = members.map(member => member.email);
+    console.log(emails[0])
     if (emails[0] !== user_email) {
         return { error: true, message: "Email does not match current user" }
     }
@@ -50,6 +54,7 @@ validateTeam = async (members, user_email) => {
             search: email
         };
 
+        console.log(process.env.GRAPHQL_AUTH)
         const res = await axios({
             method: 'POST',
             url: GRAPHQL_URL,
@@ -164,10 +169,10 @@ getEligiblePrizes = (users) => {
 
             users.forEach(user => {
                 if (!user.confirmationBranch) {
-                    return res.send({
+                    return {
                         error: true,
                         message: "User: " + user.email + " does not have a confirmation branch"
-                    });
+                    };
                 }
 
                 if (user.confirmationBranch === "Emerging Participant Confirmation") {
@@ -208,6 +213,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
     const data = req.body.submission;
 
     const teamValidation = await validateTeam(data.members, req.user.email)
+    console.log(teamValidation)
     if (teamValidation.error) {
         return res.send({ error: true, message: "Invalid team" })
     }
@@ -216,23 +222,28 @@ submissionRoutes.route("/create").post(async (req, res) => {
     if (devpostValidation.error) {
         return res.send({ error: true, message: "Invalid devpost submission" })
     }
-
-    const resp = await axios({
-        method: 'POST',
-        url: "https://api.whereby.dev/v1/meetings",
-        headers: {
-            "Authorization": 'Bearer ' + process.env.WHEREBY_KEY,
-            "Content-Type": "application/json"
-        },
-        data: JSON.stringify({
-            isLocked: true,
-            roomNamePrefix: "/expo-",
-            roomMode: "group",
-            startDate: DateTime.local().plus({ hours: 1 }).toISO(),
-            endDate: DateTime.local().plus({ hours: 12 }).toISO(),
-            fields: [ "hostRoomUrl" ]
-        })
-    });
+    var resp = {}
+    try {
+        const resp = await axios({
+            method: 'POST',
+            url: "https://api.whereby.dev/v1/meetings",
+            headers: {
+                "Authorization": 'Bearer ' + process.env.WHEREBY_KEY,
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({
+                isLocked: true,
+                roomNamePrefix: "/expo-",
+                roomMode: "group",
+                startDate: DateTime.local().plus({ hours: 1 }).toISO(),
+                endDate: DateTime.local().plus({ hours: 12 }).toISO(),
+                fields: [ "hostRoomUrl" ]
+            })
+        });
+    } catch(err) {
+        console.log(err)
+        return res.send({ error: true, message: "Error creating Whereby" });
+    }
 
     try {
         await Submission.create({
@@ -241,12 +252,14 @@ submissionRoutes.route("/create").post(async (req, res) => {
             name: data.name,
             members: await User.find({ email: data.members.map(member => member.email) }),
             categories: data.prizes,
+            round: 'SUBMITTED',
             wherebyRoom: resp.data
         });
     } catch (err) {
         console.error(err);
         return res.send({ error: true, message: "Submission could not be saved - please contact help desk" });
     }
+
 
     res.send({ error: false });
 });
@@ -277,5 +290,33 @@ submissionRoutes.route("/dashboard").get(async (req, res) => {
         return res.send({ error: true, message: err.message });
     }
 });
+
+submissionRoutes.route("/export").get(async (req,res) => {
+    const round = req.params.round
+    try {
+        const projects = await Submission.find({
+            round: 'SUBMITTED'
+        }).select('name devpost categories wherebyRoom projectId')
+        return res.send({error: false, projects: projects})
+    } catch(err) {
+        return res.send({error: true, message: "Error: " + err})
+    }
+
+})
+
+submissionRoutes.route("/accept-projects").post(async (req,res) => {
+    const projectIds = req.body.projectIds;
+    try {
+        if(projectIds) {
+            await Submission.updateMany({"projectId": {"$in": projectIds}},{"$set": {"round":"ACCEPTED"}});
+            return res.send({error: false})
+        } else {
+            return res.send({error: true, message: "projects not specified"})
+        }
+    } catch(err) {
+        console.log(err);
+        return res.send({error: true, message: "Error: " + err})
+    }
+})
 
 exports.submissionRoutes = submissionRoutes;

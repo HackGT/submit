@@ -7,6 +7,8 @@ const MONGO_URL = String(process.env.MONGO_URL);
 mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true }).catch(err => {
     throw err;
 });
+autoIncrement = require('mongoose-auto-increment');
+autoIncrement.initialize(mongoose);
 
 exports.createNew = (model, doc) => {
     return new model(doc);
@@ -65,8 +67,13 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
     isActive: Boolean
 }));
 
-exports.Submission = mongoose.model("Submission", new mongoose.Schema({
+var submissionSchema = new mongoose.Schema({
     categories: [String],
+    projectId: Number,
+    round: {
+        type: String,
+        enum: ['FLAGGED','SUBMITTED', 'ACCEPTED', 'REJECTED']
+    },
     hackathon: {
         type: String,
         required: true,
@@ -91,4 +98,8 @@ exports.Submission = mongoose.model("Submission", new mongoose.Schema({
         startDate: String,
         endDate: String
     }
-}));
+})
+
+submissionSchema.plugin(autoIncrement.plugin, {model: 'Submission', field: 'projectId'})
+
+exports.Submission = mongoose.model("Submission", submissionSchema);
