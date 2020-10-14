@@ -50,15 +50,6 @@ exports.Team = mongoose.model("Team", new mongoose.Schema({
     }
 }));
 
-exports.Category = mongoose.model("Category", new mongoose.Schema({
-    name: String,
-    hackathon: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Hackathon",
-        required: true
-    }
-}));
-
 exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
     name: {
         type: String,
@@ -68,7 +59,7 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
 }));
 
 var submissionSchema = new mongoose.Schema({
-    categories: [String],
+    prizes: [String],
     projectId: Number,
     round: {
         type: String,

@@ -12,10 +12,6 @@ export type Team = {
     submision: Submission;
 }
 
-export type Category = {
-    name: string;
-}
-
 export type Hackathon = {
     name: string;
     image: string;
@@ -24,6 +20,6 @@ export type Hackathon = {
 
 export type Submission = {
     devpost: string;
-    categories: Category[];
+    prizes: string[];
     hackathon: Hackathon;
 }

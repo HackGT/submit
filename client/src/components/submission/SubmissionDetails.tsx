@@ -37,7 +37,7 @@ const SubmissionDetails: React.FC = (props) => {
       case "ACCEPTED":
         return <Alert
           message={
-            <Text>Congrats on moving to the next round! Here is the video link for you to join the judging call: <a href={data.submission.wherebyRoom.hostRoomUrl} target="_blank">Join Here</a></Text>}
+            <Text>Congrats on moving to the next round! Here is the video link for you to join the judging call: <a href={data.submission.wherebyRoom.hostRoomUrl} target="_blank" rel="noopener noreferrer">Join Here</a></Text>}
           type="success"
           showIcon
         />;
@@ -60,7 +60,7 @@ const SubmissionDetails: React.FC = (props) => {
         <Descriptions.Item label={<Label name="Name" />}>{data.submission.name}</Descriptions.Item>
         <Descriptions.Item label={<Label name="Emails" />}>{data.submission.members.map((item: any) => item.email).join(', ')}</Descriptions.Item>
         <Descriptions.Item label={<Label name="Devpost" />}><a href={data.submission.devpost}>{data.submission.devpost}</a></Descriptions.Item>
-        <Descriptions.Item label={<Label name="Selected Categories" />}>{data.submission.categories.join(', ')}</Descriptions.Item>
+        <Descriptions.Item label={<Label name="Selected Prizes" />}>{data.submission.prizes.join(', ')}</Descriptions.Item>
       </Descriptions>
     </div>
   )

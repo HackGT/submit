@@ -154,7 +154,7 @@ validateDevpost = async (devpost_url) => {
 }
 
 /*
-    - Classify team into category based on user tracks (from registration)
+    - Classify team into prize based on user tracks (from registration)
     - Return eligible prizes based on team type
 */
 getEligiblePrizes = (users) => {
@@ -253,7 +253,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
             devpost: data.devpost,
             name: data.name,
             members: await User.find({ email: data.members.map(member => member.email) }),
-            categories: data.prizes,
+            prizes: data.prizes,
             round: flag ? 'FLAGGED' : 'SUBMITTED',
             wherebyRoom: resp.data
         });
@@ -262,6 +262,27 @@ submissionRoutes.route("/create").post(async (req, res) => {
         return res.send({ error: true, message: "Submission could not be saved - please contact help desk" });
     }
 
+
+    res.send({ error: false });
+});
+
+submissionRoutes.route("/update").post(async (req, res) => {
+    if (!req.user.admin) {
+        return res.send({ error: true, message: "User is not an admin" });
+    } else if (!req.body.id || !req.body.data) {
+        return res.send({ error: true, message: "Request data not provided" });
+    }
+
+    try {
+        const updateData = {
+            ...req.body.data,
+            members: await User.find({ email: req.body.data.members.map(member => member.email) }),
+        }
+        await Submission.findByIdAndUpdate(req.body.id, updateData);
+    } catch (err) {
+        console.error(err);
+        return res.send({ error: true, message: err.message });
+    }
 
     res.send({ error: false });
 });
@@ -293,5 +314,49 @@ submissionRoutes.route("/dashboard").get(async (req, res) => {
     }
 });
 
+submissionRoutes.route("/all").get(async (req, res) => {
+    if (!req.user.admin) {
+        return res.send({ error: true, message: "User is not an admin" });
+    }
+
+    try {
+        return res.send(await Submission.find().populate("members"));
+    } catch (err) {
+        console.error(err);
+        return res.send({ error: true, message: err.message });
+    }
+});
+
+submissionRoutes.route("/all-prizes").get(async (req, res) => {
+    return res.send({ error: false, prizes: config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes) });
+})
+
+submissionRoutes.route("/export").get(async (req,res) => {
+    const round = req.params.round;
+
+    try {
+        const projects = await Submission.find({
+            round: 'SUBMITTED'
+        }).select('name devpost prizes wherebyRoom projectId')
+        return res.send({error: false, projects: projects})
+    } catch(err) {
+        return res.send({error: true, message: "Error: " + err})
+    }
+})
+
+submissionRoutes.route("/accept-projects").post(async (req,res) => {
+    const projectIds = req.body.projectIds;
+    try {
+        if(projectIds) {
+            await Submission.updateMany({"projectId": {"$in": projectIds}},{"$set": {"round":"ACCEPTED"}});
+            return res.send({error: false})
+        } else {
+            return res.send({error: true, message: "projects not specified"})
+        }
+    } catch(err) {
+        console.log(err);
+        return res.send({error: true, message: "Error: " + err})
+    }
+})
 
 exports.submissionRoutes = submissionRoutes;
