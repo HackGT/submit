@@ -19,18 +19,18 @@ process.on("unhandledRejection", err => {
     throw err;
 });
 
-const { isAuthenticated } = require("./auth/auth.js");
-
+const { isAuthenticated, isAdmin } = require("./auth/auth.js");
 const { authRoutes } = require("./routes/auth.js");
 const { submissionRoutes } = require("./routes/submission.js");
 const { categoryRoutes } = require("./routes/category.js");
 const { hackathonRoutes } = require("./routes/hackathon.js");
+const { ballotRoutes } = require("./routes/ballot.js");
 
 app.use("/auth", authRoutes);
 app.use("/submission", isAuthenticated, submissionRoutes);
 app.use("/category", isAuthenticated, categoryRoutes);
 app.use("/hackathon", isAuthenticated, hackathonRoutes);
-
+app.use("/ballot", isAdmin, ballotRoutes);
 
 // app.get('/dashboard', isAuthenticated, (req, res) => {
 

@@ -28,7 +28,6 @@ validateTeam = async (members, user_email) => {
     }
 
     const emails = members.map(member => member.email);
-    console.log(emails[0])
     if (emails[0] !== user_email) {
         return { error: true, message: "Email does not match current user" }
     }
@@ -54,7 +53,6 @@ validateTeam = async (members, user_email) => {
             search: email
         };
 
-        console.log(process.env.GRAPHQL_AUTH)
         const res = await axios({
             method: 'POST',
             url: GRAPHQL_URL,
@@ -136,7 +134,6 @@ validateDevpost = async (devpost_url) => {
     const $ = cheerio.load(html);
     let devpost_urls = [];
     let submitted = false;
-
     $('#submissions').find('ul').children("li").each((index, elem) => {
         const item = $(elem).find("div a").attr("href");
         if (item) {
@@ -146,14 +143,13 @@ validateDevpost = async (devpost_url) => {
             }
         }
     });
-
     let eligible = submitted && (devpost_urls.length === 1);
     if (eligible) {
         return { error: false };
     } else if (!submitted) {
-        return { error: true, message: "Project not submitted to HackGT 7 Devpost" };
+        return { error: true, message: "NOT_SUBMITTED_HACKGT" };
     } else if (devpost_urls.length !== 1) {
-        return { error: true, message: "Project submitted to multiple hackathons" };
+        return { error: true, message: "MULTIPLE_SUBMISSIONS" };
     }
 }
 
@@ -202,7 +198,10 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 
 submissionRoutes.route("/devpost-validation").post(async (req, res) => {
     const resp = await validateDevpost(req.body.devpost);
-    res.send(resp);
+    if(resp.message == "MULTIPLE_SUBMISSIONS") {
+        return res.send({error: false})
+    }
+    return res.send(resp);
 });
 
 // Last step of the form, all the data is passed in here and a submission should be created
@@ -210,17 +209,20 @@ submissionRoutes.route("/create").post(async (req, res) => {
     if (!req.body.submission) {
         return res.send({ error: true, message: "Invalid submission" });
     }
-    const data = req.body.submission;
-
+    const data = req.body.submission
+    var flag = false
     const teamValidation = await validateTeam(data.members, req.user.email)
-    console.log(teamValidation)
     if (teamValidation.error) {
         return res.send({ error: true, message: "Invalid team" })
     }
 
     const devpostValidation = await validateDevpost(data.devpost)
     if (devpostValidation.error) {
-        return res.send({ error: true, message: "Invalid devpost submission" })
+        if(devpostValidation.message == "MULTIPLE_SUBMISSIONS") {
+            flag = true
+        } else {
+            return res.send({error: false})
+        }
     }
     var resp = {}
     try {
@@ -252,7 +254,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
             name: data.name,
             members: await User.find({ email: data.members.map(member => member.email) }),
             categories: data.prizes,
-            round: 'SUBMITTED',
+            round: flag ? 'FLAGGED' : 'SUBMITTED',
             wherebyRoom: resp.data
         });
     } catch (err) {
@@ -291,32 +293,5 @@ submissionRoutes.route("/dashboard").get(async (req, res) => {
     }
 });
 
-submissionRoutes.route("/export").get(async (req,res) => {
-    const round = req.params.round
-    try {
-        const projects = await Submission.find({
-            round: 'SUBMITTED'
-        }).select('name devpost categories wherebyRoom projectId')
-        return res.send({error: false, projects: projects})
-    } catch(err) {
-        return res.send({error: true, message: "Error: " + err})
-    }
-
-})
-
-submissionRoutes.route("/accept-projects").post(async (req,res) => {
-    const projectIds = req.body.projectIds;
-    try {
-        if(projectIds) {
-            await Submission.updateMany({"projectId": {"$in": projectIds}},{"$set": {"round":"ACCEPTED"}});
-            return res.send({error: false})
-        } else {
-            return res.send({error: true, message: "projects not specified"})
-        }
-    } catch(err) {
-        console.log(err);
-        return res.send({error: true, message: "Error: " + err})
-    }
-})
 
 exports.submissionRoutes = submissionRoutes;

@@ -42,6 +42,34 @@ exports.isAuthenticated = (request, response, next) => {
     }
 }
 
+exports.isAdmin = (request, response, next) => {
+	const env = process.env;
+	response.setHeader("Cache-Control", "private");
+	const auth = request.headers.authorization;
+
+	if (auth && typeof auth === "string" && auth.includes(" ")) {
+		const key = auth.split(" ")[1].toString();
+		if (key === process.env.SUBMIT_SECRET || env.DEV_MODE === "True") {
+			next();
+		}
+		else {
+			response.status(401).json({
+				"error": "Incorrect auth token!"
+			});
+		}
+	}
+	else {
+		if(env.DEV_MODE === "True") {
+			next();
+		} else {
+			response.status(401).json({
+				"error": "No auth token!"
+			});
+		}
+	}
+}
+
+
 const groundTruthStrategy = new GroundTruthStrategy(String(process.env.GROUND_TRUTH_URL));
 
 passport.use(groundTruthStrategy);
