@@ -226,7 +226,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
     }
     var resp = {}
     try {
-        const resp = await axios({
+        resp = await axios({
             method: 'POST',
             url: "https://api.whereby.dev/v1/meetings",
             headers: {

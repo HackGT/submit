@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
-const HACKGT_DEVPOST = "https://hackgt2019.devpost.com/";
+const HACKGT_DEVPOST = "https://hackgt2020.devpost.com/";
 let ballotRoutes = express.Router();
 
 var isAuth = (req) => {
@@ -35,7 +35,7 @@ ballotRoutes.route("/export").get(async (req,res) => {
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
-        }).select('name devpost categories wherebyRoom projectId')
+        }).select('name devpost prizes wherebyRoom projectId')
         console.log(projects)
         return res.send({error: false, projects: projects})
     } catch(err) {
