@@ -12,7 +12,7 @@ secrets:
   - WHEREBY_KEY
 
 health:
-  path: /
+  path: /status
 
 env:
   GROUND_TRUTH_URL: https://login.hack.gt
