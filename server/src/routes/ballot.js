@@ -4,6 +4,7 @@ const axios = require("axios");
 const rp = require("request-promise");
 const { DateTime } = require("luxon");
 const dotenv = require("dotenv");
+const { config } = require("../common");
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
@@ -35,9 +36,11 @@ ballotRoutes.route("/export").get(async (req,res) => {
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
-        }).select('name devpost prizes wherebyRoom projectId')
-        console.log(projects)
-        return res.send({error: false, projects: projects})
+        }).select('name devpost prizes wherebyRoom projectId');
+
+        const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
+
+        return res.send({error: false, projects: projects, categories: categories})
     } catch(err) {
         return res.send({error: true, message: "Error: " + err})
     }
