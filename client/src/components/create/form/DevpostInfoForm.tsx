@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Col, Form, Input, message, Row, Typography } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 import axios from "axios";
-import AnchorLink from "antd/lib/anchor/AnchorLink";
 
 const { Title, Text } = Typography;
 
