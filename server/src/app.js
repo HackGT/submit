@@ -32,6 +32,10 @@ app.use("/ballot", isAdmin, ballotRoutes);
 
 app.use("/public", isAuthenticated, express.static(path.join(__dirname, "/public")));
 
+app.get("/status", (req, res) => {
+    res.status(200).send("Success");
+});
+
 // Serve React app
 app.use(isAuthenticated, express.static(path.join(__dirname, "../../client/build")));
 app.get("*", isAuthenticated, (request, response) => {

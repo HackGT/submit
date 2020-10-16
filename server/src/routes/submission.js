@@ -164,7 +164,7 @@ getEligiblePrizes = (users) => {
             let numEmerging = 0;
 
             users.forEach(user => {
-                if (!user.confirmationBranch) {
+                if (!user || !user.confirmationBranch) {
                     return {
                         error: true,
                         message: "User: " + user.email + " does not have a confirmation branch"

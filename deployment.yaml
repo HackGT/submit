@@ -11,6 +11,9 @@ secrets:
   - GRAPHQL_AUTH
   - WHEREBY_KEY
 
+health:
+  path: /
+
 env:
   GROUND_TRUTH_URL: https://login.hack.gt
   PORT: 3000
