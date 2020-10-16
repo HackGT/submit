@@ -98,12 +98,12 @@ validateTeam = async (members, user_email) => {
     if (errConfirmed) {
         return { error: true, message: "User: " + errConfirmed + " not confirmed for " + CURRENT_HACKATHON };
     }
-    // if (errSubmission) {
-    //     return {
-    //         error: true,
-    //         message: "User: " + errSubmission + " already has a submission for " + CURRENT_HACKATHON
-    //     };
-    // }
+    if (errSubmission) {
+        return {
+            error: true,
+            message: "User: " + errSubmission + " already has a submission for " + CURRENT_HACKATHON
+        };
+    }
 
     const eligiblePrizes = getEligiblePrizes(registrationUsers);
 
