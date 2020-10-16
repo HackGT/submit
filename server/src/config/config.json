@@ -2,17 +2,28 @@
   "hackathons": {
     "HackGT 7": {
       "emergingPrizes": [
-        "Most Impactful",
-        "Most Creative",
-        "Best Design",
-        "Best Web Development Track",
+        "Emerging: Best Overall",
+        "Emerging: Most Impactful",
+        "Emerging: Most Creative",
+        "Emerging: Best Design",
+        "Best Web Dev Track",
         "Best Data Science Track",
-        "Best Video Game Development",
-        "Best Mobile App Development"
+        "Best Video Game Dev Track",
+        "Best Mobile App Dev Track"
       ],
       "sponsorPrizes": [
-        "NCR",
-        "Blackrock"
+        "NCR - Disruptive and innovative solution",
+        "BlackRock - Best chatbot",
+        "Anthem - Digital medicine",
+        "Capital One - Best financial hack",
+        "Facebook - Spark AR",
+        "IBM - Community response to COVID-19",
+        "Microsoft Azure - Champ prize (Hack for Good)",
+        "NewsQ - Social good",
+        "MLH - Best domain",
+        "MLH - Best use of Google Cloud",
+        "MLH - Best hardware hack",
+        "MLH - Best use of DataStax Astra"
       ]
     }
   }
