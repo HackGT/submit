@@ -42,7 +42,7 @@ const ReviewForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Review Submission</Title>
-      <Text>Please look over your submission details. You will not be able to change it after you submit.</Text>
+      <Text>Please look over your submission details. You will not be able to change them after you submit.</Text>
       <Form
         name="review"
         onFinish={onFinish}

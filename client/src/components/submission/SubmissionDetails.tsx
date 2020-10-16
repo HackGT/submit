@@ -43,7 +43,8 @@ const SubmissionDetails: React.FC = (props) => {
         />;
       case "REJECTED":
         return <Alert
-          message="After reviewing your submission in round 1, you will not be eligible for live judging. However, you can still win emerging prizes if you are an emerging team, so look out for the prizes at closing ceremonies!"
+          // TODO: update message
+          message="After reviewing your submission in round 1, you will not be eligible for live judging."
           type="info"
           showIcon
         />;

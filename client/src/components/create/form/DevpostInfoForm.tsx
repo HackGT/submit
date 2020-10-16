@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Col, Form, Input, message, Row, Typography } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 import axios from "axios";
+import AnchorLink from "antd/lib/anchor/AnchorLink";
 
 const { Title, Text } = Typography;
 
@@ -43,7 +44,7 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Devpost Info</Title>
-      <Text>Please create a submission on devpost.com, and list the url for your submission and team name below.</Text>
+      <Text>Please create a submission on hackgt2020.devpost.com, and list the URL for your submission and team name below.</Text>
       <Form
         name="devpost"
         onFinish={onFinish}

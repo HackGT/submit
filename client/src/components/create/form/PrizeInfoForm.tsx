@@ -50,7 +50,7 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
   return (
     <>
       <Title level={2}>Prize Info</Title>
-      <Text>Please select the prizes you would like to be considered for. Based on your team members, these are the only prizes you eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
+      <Text>Please select the prizes you would like to be considered for. Based on your team members, these are the prizes you are eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
       <Form
         name="prize"
         onFinish={onFinish}

@@ -7,7 +7,7 @@ const NotFound: React.FC = () => (
     <Result
       status="404"
       title="404 Error"
-      subTitle="Hey bud! Seems like the page you're looking for doesn't exist."
+      subTitle="Oops! Seems like the page you're looking for doesn't exist."
       extra={<Link to="/"><Button type="primary">Return Home</Button></Link>}
     />
   </div>
