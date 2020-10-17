@@ -46,6 +46,22 @@ ballotRoutes.route("/export").get(async (req,res) => {
     }
 })
 
+ballotRoutes.route("/exportAccepted").get(async (req,res) => {
+
+    const round = req.params.round
+    try {
+        const projects = await Submission.find({
+            round: 'ACCEPTED'
+        }).select('name devpost prizes wherebyRoom projectId');
+
+        const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
+
+        return res.send({error: false, projects: projects, categories: categories})
+    } catch(err) {
+        return res.send({error: true, message: "Error: " + err})
+    }
+})
+
 ballotRoutes.route("/accept-projects").post(async (req,res) => {
     const projectIds = req.body.projectIds;
     try {
