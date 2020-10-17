@@ -11,7 +11,7 @@ dotenv.config();
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
-const HACKGT_DEVPOST = "https://hackgt2020.devpost.com/";
+const HACKGT_DEVPOST = ["https://hackgt2020.devpost.com/", "https://hackgsu-spring-2017.devpost.com/", "https://hackgt2019.devpost.com/"];
 
 let submissionRoutes = express.Router();
 
