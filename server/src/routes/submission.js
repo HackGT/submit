@@ -1,4 +1,4 @@
-const { User, Submission } = require("../schema");
+const { User, Submission, Config } = require("../schema");
 const { config } = require("../common");
 const express = require("express");
 const axios = require("axios");
@@ -11,7 +11,7 @@ dotenv.config();
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
 const CURRENT_HACKATHON = "HackGT 7";
-const HACKGT_DEVPOST = "https://hackgt2020.devpost.com/";
+const HACKGT_DEVPOST = "https://hackgt2019.devpost.com/";
 
 let submissionRoutes = express.Router();
 
@@ -206,6 +206,10 @@ submissionRoutes.route("/devpost-validation").post(async (req, res) => {
 
 // Last step of the form, all the data is passed in here and a submission should be created
 submissionRoutes.route("/create").post(async (req, res) => {
+    const submissionsOpen = await Config.find({ submissionsOpen: true});
+    if (submissionsOpen.length === 0 || !submissionsOpen[1].submissionsOpen) {
+        return res.send({ error: true, message: "Submissions closed" });
+    }
     if (!req.body.submission) {
         return res.send({ error: true, message: "Invalid submission" });
     }

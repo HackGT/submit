@@ -58,6 +58,10 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
     isActive: Boolean
 }));
 
+exports.Config = mongoose.model("Config", new mongoose.Schema({
+    submissionsOpen: Boolean
+}));
+
 var submissionSchema = new mongoose.Schema({
     prizes: [String],
     projectId: Number,

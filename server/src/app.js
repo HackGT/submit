@@ -24,11 +24,13 @@ const { authRoutes } = require("./routes/auth.js");
 const { submissionRoutes } = require("./routes/submission.js");
 const { hackathonRoutes } = require("./routes/hackathon.js");
 const { ballotRoutes } = require("./routes/ballot.js");
+const { configRoutes } = require("./routes/config.js");
 
 app.use("/auth", authRoutes);
 app.use("/submission", isAuthenticated, submissionRoutes);
 app.use("/hackathon", isAuthenticated, hackathonRoutes);
 app.use("/ballot", isAdmin, ballotRoutes);
+app.use("/config", isAuthenticated, configRoutes);
 
 app.use("/public", isAuthenticated, express.static(path.join(__dirname, "/public")));
 

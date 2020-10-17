@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Steps } from "antd";
+import {Steps, Typography} from "antd";
 import TeamInfoForm from "./form/TeamInfoForm";
 import PrizeInfoForm from "./form/PrizeInfoForm";
 import DevpostInfoForm from "./form/DevpostInfoForm";
 import { User } from "../../types/types";
 import ResultForm from "./form/ResultForm";
 import ReviewForm from "./form/ReviewForm";
+import axios from "axios";
 
+const { Title } = Typography;
 const { Step } = Steps;
 
 interface Props {
@@ -16,6 +18,14 @@ interface Props {
 const SubmissionFormContainer: React.FC<Props> = (props) => {
   const [current, setCurrent] = useState(0);
   const [data, setData] = useState<any>({});
+
+  const [submissionsOpen, setSubmissionsOpen] = useState<any>(false);
+  axios.get("/config/submissionStatus").then(result => {
+    console.log(result.data.submissionsOpen);
+    if (result.data.submissionsOpen === true) {
+      setSubmissionsOpen(true);
+    }
+  });
 
   const nextStep = () => {
     if ([0, 1, 2, 3].includes(current)) {
@@ -53,19 +63,29 @@ const SubmissionFormContainer: React.FC<Props> = (props) => {
   }
 
   console.log(data);
+  console.log(submissionsOpen);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
-      <div>
-        {renderComponent(current)}
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
+          {submissionsOpen &&
+          <div>
+            <div>
+                {renderComponent(current)}
+            </div>
+            <Steps current={current} style={{ marginBottom: "16px" }}>
+                <Step key={0} title="Team Info" />
+                <Step key={1} title="Prize Info" />
+                <Step key={2} title="Devpost Info" />
+                <Step key={3} title="Review" />
+            </Steps>
+          </div>}
+          {!submissionsOpen &&
+          <div>
+            <Title level={2}>Create Submission</Title>
+            <Title level={5}>Submissions are closed</Title>
+          </div>
+          }
       </div>
-      <Steps current={current} style={{ marginBottom: "16px" }}>
-        <Step key={0} title="Team Info" />
-        <Step key={1} title="Prize Info" />
-        <Step key={2} title="Devpost Info" />
-        <Step key={3} title="Review" />
-      </Steps>
-    </div>
   )
 }
 

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Card, ConfigProvider, Empty, List, Typography, Tag, Button } from "antd";
+import {Card, ConfigProvider, Empty, List, Typography, Tag, Button, Switch, message} from "antd";
 import useAxios from "axios-hooks";
 import LoadingDisplay from "../../util/LoadingDisplay";
 import ErrorDisplay from "../../util/ErrorDisplay";
 import SubmissionEditModal from "./SubmissionEditModal";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
@@ -11,6 +12,13 @@ const AdminHome: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInitialValues, setModalInitialValues] = useState<any>(null);
   const [{ data, loading }, refetch] = useAxios("/submission/all", { useCache: false });
+
+  const [submissionsOpen, setSubmissionsOpen] = useState<any>(false);
+  axios.get("/config/submissionStatus").then(result => {
+      if (result.data.submissionsOpen === true) {
+          setSubmissionsOpen(true);
+      }
+  });
 
   if (loading) {
     return <LoadingDisplay />;
@@ -34,22 +42,60 @@ const AdminHome: React.FC = () => {
       default:
         return null;
     }
-  }
+  };
 
   const openModal = (submissionData: any) => {
     setModalVisible(true);
     setModalInitialValues(submissionData);
-  }
+  };
 
   const closeModal = () => {
     setModalVisible(false);
     setModalInitialValues(null);
     refetch();
-  }
+  };
+
+  const handleSubmissionsOpenChange = ( submissionsOpen: Boolean ) => {
+      submissionsOpen ? openSubmissions() : closeSubmissions();
+  };
+
+  const closeSubmissions = () => {
+      axios.post("/config/closeSubmissions")
+          .then((res) => {
+              if (res.data.error) {
+                  message.error(res.data.message, 2);
+              } else {
+                  setSubmissionsOpen(res.data.submissionsOpen);
+              }
+          })
+          .catch((err) => {
+              message.error("Error: Please ask for help", 2);
+              console.log(err);
+          });
+  };
+
+  const openSubmissions = () => {
+      axios.post("/config/openSubmissions")
+          .then((res) => {
+              if (res.data.error) {
+                  message.error(res.data.message, 2);
+              } else {
+                  setSubmissionsOpen(res.data.submissionsOpen);
+              }
+          })
+          .catch((err) => {
+              message.error("Error: Please ask for help", 2);
+              console.log(err);
+          });
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
       <Title level={2}>All Submissions</Title>
+      <Title level={4}>Submissions Open</Title>
+      <div style={{ display: "flex", flexDirection: "column", width: "5%" }}>
+        <Switch size="small" checked={submissionsOpen} onChange={handleSubmissionsOpenChange} />
+      </div>
       <ConfigProvider
         renderEmpty={() => (
           <Empty description="No Submissions" />
