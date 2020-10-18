@@ -64,7 +64,7 @@ const ReviewForm: React.FC<Props> = (props) => {
                       rules={[FORM_RULES.requiredRule, FORM_RULES.emailRule]}
                       label={"Member " + (index + 1)}
                     >
-                      <Input disabled={true}/>
+                      <Input disabled={true} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -77,7 +77,6 @@ const ReviewForm: React.FC<Props> = (props) => {
           <Col {...FORM_LAYOUT.full}>
             <Form.Item
               name="prizes"
-              rules={[FORM_RULES.requiredRule]}
               label="Prizes"
             >
               <Select disabled={true} mode="multiple" showSearch optionFilterProp="label" />
