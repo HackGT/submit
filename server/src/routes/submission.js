@@ -138,7 +138,7 @@ validateDevpost = async (devpost_url) => {
         const item = $(elem).find("div a").attr("href");
         if (item) {
             devpost_urls.push(item);
-            if (item === HACKGT_DEVPOST) {
+            if (HACKGT_DEVPOST.includes(item)) {
                 submitted = true;
             }
         }
