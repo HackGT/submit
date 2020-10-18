@@ -43,7 +43,7 @@ const SubmissionDetails: React.FC = (props) => {
         />;
       case "REJECTED":
         return <Alert
-          message="Thank you for your submission to HackGT 7! After reviewing your submission, we have decided not to move it to round two of judging as it does not meet our live judging criteria.We hope you enjoyed the event and join us for future HackGT events! We invite you to stay for live judging and closing ceremonies."
+          message="Thank you for your submission to HackGT 7! After reviewing your submission, we will not be moving it forward to round two of judging as it does not meet our live judging criteria. We hope you enjoyed the event and join us for future HackGT events! We invite you to stay for live judging and closing ceremonies."
           type="info"
           showIcon
         />;
