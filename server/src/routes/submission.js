@@ -152,10 +152,10 @@ validateDevpost = async (devpost_url) => {
     if (eligible) {
         return { error: false };
     } else if (!submitted) {
-        return { error: true, message: "Project not submitted to " + CURRENT_HACKATHON };
+        return { error: true, message: "Project not submitted to " + CURRENT_HACKATHON + " devpost. Please follow the instructions below." };
     } else if (devpost_urls.length !== 1) {
         return { error: true, message: "Multiple hackathon submissions" };
-    } else if(!(devpost_count == 0)) {
+    } else if (!(devpost_count == 0)) {
         return { error: true, message: "Duplicate devpost submission" };
     }
     return { error: true, message: "Please contact help desk" };
