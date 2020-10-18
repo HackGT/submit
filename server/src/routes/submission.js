@@ -198,18 +198,20 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 
 submissionRoutes.route("/devpost-validation").post(async (req, res) => {
     const resp = await validateDevpost(req.body.devpost);
-    if(resp.message == "MULTIPLE_SUBMISSIONS") {
-        return res.send({error: false})
+    if (resp.message == "MULTIPLE_SUBMISSIONS") {
+        return res.send({ error: false })
     }
     return res.send(resp);
 });
 
 // Last step of the form, all the data is passed in here and a submission should be created
 submissionRoutes.route("/create").post(async (req, res) => {
-    const submissionsOpen = await Config.find({ submissionsOpen: true});
-    if (submissionsOpen.length === 0 || !submissionsOpen[1].submissionsOpen) {
-        return res.send({ error: true, message: "Submissions closed" });
+    const submissionsOpen = await Config.count({ submissionsOpen: true });
+
+    if (submissionsOpen === 0) {
+        return res.send({ error: true, message: "Sorry, submissions are currently closed" });
     }
+
     if (!req.body.submission) {
         return res.send({ error: true, message: "Invalid submission" });
     }
@@ -222,10 +224,10 @@ submissionRoutes.route("/create").post(async (req, res) => {
 
     const devpostValidation = await validateDevpost(data.devpost)
     if (devpostValidation.error) {
-        if(devpostValidation.message == "MULTIPLE_SUBMISSIONS") {
+        if (devpostValidation.message == "MULTIPLE_SUBMISSIONS") {
             flag = true
         } else {
-            return res.send({error: false})
+            return res.send({ error: false })
         }
     }
     var resp = {}
@@ -243,10 +245,10 @@ submissionRoutes.route("/create").post(async (req, res) => {
                 roomMode: "group",
                 startDate: DateTime.local().plus({ hours: 1 }).toISO(),
                 endDate: DateTime.local().plus({ hours: 12 }).toISO(),
-                fields: [ "hostRoomUrl" ]
+                fields: ["hostRoomUrl"]
             })
         });
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         return res.send({ error: true, message: "Error creating Whereby" });
     }
@@ -335,31 +337,31 @@ submissionRoutes.route("/all-prizes").get(async (req, res) => {
     return res.send({ error: false, prizes: config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes) });
 })
 
-submissionRoutes.route("/export").get(async (req,res) => {
+submissionRoutes.route("/export").get(async (req, res) => {
     const round = req.params.round;
 
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
         }).select('name devpost prizes wherebyRoom projectId')
-        return res.send({error: false, projects: projects})
-    } catch(err) {
-        return res.send({error: true, message: "Error: " + err})
+        return res.send({ error: false, projects: projects })
+    } catch (err) {
+        return res.send({ error: true, message: "Error: " + err })
     }
 })
 
-submissionRoutes.route("/accept-projects").post(async (req,res) => {
+submissionRoutes.route("/accept-projects").post(async (req, res) => {
     const projectIds = req.body.projectIds;
     try {
-        if(projectIds) {
-            await Submission.updateMany({"projectId": {"$in": projectIds}},{"$set": {"round":"ACCEPTED"}});
-            return res.send({error: false})
+        if (projectIds) {
+            await Submission.updateMany({ "projectId": { "$in": projectIds } }, { "$set": { "round": "ACCEPTED" } });
+            return res.send({ error: false })
         } else {
-            return res.send({error: true, message: "projects not specified"})
+            return res.send({ error: true, message: "projects not specified" })
         }
-    } catch(err) {
+    } catch (err) {
         console.log(err);
-        return res.send({error: true, message: "Error: " + err})
+        return res.send({ error: true, message: "Error: " + err })
     }
 })
 
