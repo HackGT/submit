@@ -72,7 +72,7 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
             <Form.Item
               name="name"
               rules={[FORM_RULES.requiredRule]}
-              label="Team Name"
+              label="Team Name (Should match devpost submission name)"
             >
               <Input placeholder="Alexa Assistant" />
             </Form.Item>
