@@ -63,11 +63,14 @@ exports.Config = mongoose.model("Config", new mongoose.Schema({
 }));
 
 var submissionSchema = new mongoose.Schema({
-    prizes: [String],
+    prizes: {
+        type: [String],
+        default: []
+    },
     projectId: Number,
     round: {
         type: String,
-        enum: ['FLAGGED','SUBMITTED', 'ACCEPTED', 'REJECTED']
+        enum: ['FLAGGED', 'SUBMITTED', 'ACCEPTED', 'REJECTED']
     },
     hackathon: {
         type: String,
@@ -98,6 +101,6 @@ var submissionSchema = new mongoose.Schema({
     }
 })
 
-submissionSchema.plugin(autoIncrement.plugin, {model: 'Submission', field: 'projectId'})
+submissionSchema.plugin(autoIncrement.plugin, { model: 'Submission', field: 'projectId' })
 
 exports.Submission = mongoose.model("Submission", submissionSchema);
