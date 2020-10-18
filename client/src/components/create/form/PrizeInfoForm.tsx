@@ -65,8 +65,8 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
           <Col {...FORM_LAYOUT.full}>
             <Form.Item
               name="prizes"
-              rules={[FORM_RULES.requiredRule]}
               label="Prizes"
+              initialValue={[]}
             >
               <Select placeholder="Select prizes" mode="multiple" options={prizeOptions} showSearch optionFilterProp="label" />
             </Form.Item>
