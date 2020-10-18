@@ -22,4 +22,5 @@ export type Submission = {
     devpost: string;
     prizes: string[];
     hackathon: Hackathon;
+    expo: number;
 }
