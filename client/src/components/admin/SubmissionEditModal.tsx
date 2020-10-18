@@ -25,7 +25,7 @@ const SubmissionEditModal: React.FC<Props> = (props) => {
     }
   });
 
-  const roundOptions = ['FLAGGED','SUBMITTED', 'ACCEPTED', 'REJECTED'].map((round: string) => {
+  const roundOptions = ['FLAGGED', 'SUBMITTED', 'ACCEPTED', 'REJECTED'].map((round: string) => {
     return {
       label: round,
       value: round
@@ -94,7 +94,7 @@ const SubmissionEditModal: React.FC<Props> = (props) => {
                             ? <Button
                               type="text"
                               size="small"
-                              style={{margin: 0}}
+                              style={{ margin: 0 }}
                               icon={<DeleteOutlined />}
                               onClick={() => remove(field.name)}
                             />
@@ -117,7 +117,7 @@ const SubmissionEditModal: React.FC<Props> = (props) => {
                       </Form.Item>
                     </Col>
                   </Row>
-                ) : null }
+                ) : null}
               </div>
             )}
           </Form.List>
@@ -126,7 +126,6 @@ const SubmissionEditModal: React.FC<Props> = (props) => {
             <Col {...FORM_LAYOUT.full}>
               <Form.Item
                 name="prizes"
-                rules={[FORM_RULES.requiredRule]}
                 label="Prizes"
               >
                 <Select placeholder="Select prizes" mode="multiple" options={prizeOptions} loading={loading} showSearch optionFilterProp="label" />
@@ -166,6 +165,17 @@ const SubmissionEditModal: React.FC<Props> = (props) => {
                 label="Round"
               >
                 <Select placeholder="Select round" options={roundOptions} optionFilterProp="label" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row justify="center">
+            <Col {...FORM_LAYOUT.full}>
+              <Form.Item
+                name="expo"
+                label="Expo"
+              >
+                <Input placeholder="1" type="number" />
               </Form.Item>
             </Col>
           </Row>

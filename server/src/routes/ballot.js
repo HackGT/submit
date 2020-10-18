@@ -6,33 +6,9 @@ const { DateTime } = require("luxon");
 const dotenv = require("dotenv");
 const { config } = require("../common");
 
-const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
-const CURRENT_HACKATHON = "HackGT 7";
-const HACKGT_DEVPOST = process.env.DEVPOST_URL;
 let ballotRoutes = express.Router();
 
-var isAuth = (req) => {
-    const auth = req.headers.authorization;
-	if (auth && typeof auth === "string" && auth.includes(" ")) {
-		const key = auth.split(" ")[1].toString();
-		if (key === process.env.SUBMIT_SECRET || env.DEV_MODE === "True") {
-            return {error: false}
-		}
-		else {
-            return {error: true, message: "Incorrect auth token"}
-		}
-	}
-	else {
-		if(env.DEV_MODE === "True") {
-			return {error: false}
-		} else {
-			return {error: true, message: "No auth token"}
-		}
-	}
-}
-ballotRoutes.route("/export").get(async (req,res) => {
-
-    const round = req.params.round
+ballotRoutes.route("/export").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
@@ -40,15 +16,13 @@ ballotRoutes.route("/export").get(async (req,res) => {
 
         const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
 
-        return res.send({error: false, projects: projects, categories: categories})
-    } catch(err) {
-        return res.send({error: true, message: "Error: " + err})
+        return res.send({ error: false, projects: projects, categories: categories })
+    } catch (err) {
+        return res.send({ error: true, message: "Error: " + err })
     }
-})
+});
 
-ballotRoutes.route("/exportAccepted").get(async (req,res) => {
-
-    const round = req.params.round
+ballotRoutes.route("/exportAccepted").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             round: 'ACCEPTED'
@@ -56,32 +30,32 @@ ballotRoutes.route("/exportAccepted").get(async (req,res) => {
 
         const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
 
-        return res.send({error: false, projects: projects, categories: categories})
-    } catch(err) {
-        return res.send({error: true, message: "Error: " + err})
+        return res.send({ error: false, projects: projects, categories: categories })
+    } catch (err) {
+        return res.send({ error: true, message: "Error: " + err })
     }
-})
+});
 
-ballotRoutes.route("/accept-projects").post(async (req,res) => {
+ballotRoutes.route("/accept-projects").post(async (req, res) => {
     const projects = req.body.projects;
     try {
-        if(projects) {
+        if (projects) {
             projects.forEach(async project => {
                 await Submission.updateOne({
                     "projectId": project.projectId
                 }, {
                     "round": "ACCEPTED",
-                    "expo" : project.expoNumber
+                    "expo": project.expoNumber
                 });
             })
-            return res.send({error: false})
+            return res.send({ error: false })
         } else {
-            return res.send({error: true, message: "projects not specified"})
+            return res.send({ error: true, message: "Projects not specified" })
         }
-    } catch(err) {
+    } catch (err) {
         console.log(err);
-        return res.send({error: true, message: "Error: " + err})
+        return res.send({ error: true, message: "Error: " + err })
     }
-})
+});
 
 exports.ballotRoutes = ballotRoutes;

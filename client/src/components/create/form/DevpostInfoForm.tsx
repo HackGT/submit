@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Form, Input, message, Row, Typography } from "antd";
+import { Alert, Button, Col, Form, Input, message, Row, Typography } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 import axios from "axios";
 
@@ -42,8 +42,9 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
 
   return (
     <>
+      <Alert type="error" style={{ marginBottom: "15px" }} message={<strong>All information you submit in this form is FINAL, including registering for sponsor challenges. There will be no changes made after you submit your project.</strong>} />
       <Title level={2}>Devpost Info</Title>
-      <Text>Please create a submission on hackgt2020.devpost.com, and list the URL for your submission and team name below.</Text>
+      <Text>Please create a submission on our <a href="https://hackgt2020.devpost.com" target="_blank">devpost</a>, and list the URL for your submission and team name below. Make sure to include a 2 min project demo with your devpost submission.</Text>
       <Form
         name="devpost"
         onFinish={onFinish}
