@@ -143,7 +143,12 @@ validateDevpost = async (devpost_url) => {
             }
         }
     });
-    let eligible = submitted && (devpost_urls.length === 1);
+    devpost_count = await Submission.count({devpost: devpost_url});
+
+    let eligible = submitted
+                   && (devpost_urls.length === 1)
+                   && (devpost_count == 0);
+
     if (eligible) {
         return { error: false };
     } else if (!submitted) {

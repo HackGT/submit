@@ -31,7 +31,7 @@ var isAuth = (req) => {
 	}
 }
 ballotRoutes.route("/export").get(async (req,res) => {
-    
+
     const round = req.params.round
     try {
         const projects = await Submission.find({
@@ -52,7 +52,7 @@ ballotRoutes.route("/exportAccepted").get(async (req,res) => {
     try {
         const projects = await Submission.find({
             round: 'ACCEPTED'
-        }).select('name devpost prizes wherebyRoom projectId');
+        }).select('name devpost prizes wherebyRoom projectId expo');
 
         const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
 
@@ -63,10 +63,17 @@ ballotRoutes.route("/exportAccepted").get(async (req,res) => {
 })
 
 ballotRoutes.route("/accept-projects").post(async (req,res) => {
-    const projectIds = req.body.projectIds;
+    const projects = req.body.projects;
     try {
-        if(projectIds) {
-            await Submission.updateMany({"projectId": {"$in": projectIds}},{"$set": {"round":"ACCEPTED"}});
+        if(projects) {
+            projects.forEach(async project => {
+                await Submission.updateOne({
+                    "projectId": project.projectId
+                }, {
+                    "round": "ACCEPTED",
+                    "expo" : project.expoNumber
+                });
+            })
             return res.send({error: false})
         } else {
             return res.send({error: true, message: "projects not specified"})

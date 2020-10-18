@@ -92,6 +92,9 @@ var submissionSchema = new mongoose.Schema({
         hostRoomUrl: String,
         startDate: String,
         endDate: String
+    },
+    expo: {
+        type: Number
     }
 })
 
