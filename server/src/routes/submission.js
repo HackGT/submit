@@ -152,10 +152,14 @@ validateDevpost = async (devpost_url) => {
     if (eligible) {
         return { error: false };
     } else if (!submitted) {
-        return { error: true, message: "NOT_SUBMITTED_HACKGT" };
+        return { error: true, message: "Project not submitted to " + CURRENT_HACKATHON };
     } else if (devpost_urls.length !== 1) {
-        return { error: true, message: "MULTIPLE_SUBMISSIONS" };
+        return { error: true, message: "Multiple hackathon submissions" };
+    } else if(!(devpost_count == 0)) {
+        return { error: true, message: "Duplicate devpost submission" };
     }
+    return { error: true, message: "Please contact help desk" };
+
 }
 
 /*
@@ -203,7 +207,7 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 
 submissionRoutes.route("/devpost-validation").post(async (req, res) => {
     const resp = await validateDevpost(req.body.devpost);
-    if (resp.message == "MULTIPLE_SUBMISSIONS") {
+    if (resp.message == "Multiple hackathon submissions") {
         return res.send({ error: false })
     }
     return res.send(resp);
@@ -230,7 +234,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
 
     const devpostValidation = await validateDevpost(data.devpost)
     if (devpostValidation.error) {
-        if (devpostValidation.message == "MULTIPLE_SUBMISSIONS") {
+        if (devpostValidation.message == "Multiple hackathon submissions") {
             flag = true
         } else {
             return res.send({ error: false })
