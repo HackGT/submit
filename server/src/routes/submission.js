@@ -143,11 +143,11 @@ validateDevpost = async (devpost_url) => {
             }
         }
     });
-    devpost_count = await Submission.count({devpost: devpost_url});
+    devpost_count = await Submission.count({ devpost: devpost_url });
 
     let eligible = submitted
-                   && (devpost_urls.length === 1)
-                   && (devpost_count == 0);
+        && (devpost_urls.length === 1)
+        && (devpost_count == 0);
 
     if (eligible) {
         return { error: false };
@@ -250,7 +250,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
                 roomNamePrefix: "/expo-",
                 roomMode: "group",
                 startDate: DateTime.local().plus({ hours: 1 }).toISO(),
-                endDate: DateTime.local().plus({ hours: 12 }).toISO(),
+                endDate: DateTime.local().plus({ hours: 20 }).toISO(),
                 fields: ["hostRoomUrl"]
             })
         });
