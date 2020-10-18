@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Row, Col, message, Input, Button, Typography } from "antd";
+import { Form, Row, Col, message, Input, Button, Typography, Alert } from "antd";
 import { FORM_LAYOUT, FORM_RULES } from "../../../util/util";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { User } from "../../../types/types";
@@ -54,8 +54,9 @@ const TeamInfoForm: React.FC<Props> = (props) => {
 
   return (
     <>
+      <Alert type="error" style={{ marginBottom: "15px" }} message={<strong>All information you submit in this form is FINAL, including registering for sponsor challenges. There will be no changes made after you submit your project.</strong>} />
       <Title level={2}>Team Info</Title>
-      <Text>List the emails of all your team members. Please make sure the emails used are the ones that they were accepted for.</Text>
+      <Text>Please list all the emails of all your team members below. Make sure the emails used are the ones that they were accepted for through registration.</Text>
       <Form
         name="team"
         onFinish={onFinish}
@@ -84,10 +85,10 @@ const TeamInfoForm: React.FC<Props> = (props) => {
                           ? <Button
                             type="text"
                             size="small"
-                            style={{margin: 0}}
+                            style={{ margin: 0 }}
                             icon={<DeleteOutlined />}
                             onClick={() => remove(field.name)}
-                            />
+                          />
                           : undefined}
                         defaultValue=""
                       />
@@ -107,7 +108,7 @@ const TeamInfoForm: React.FC<Props> = (props) => {
                     </Form.Item>
                   </Col>
                 </Row>
-              ) : null }
+              ) : null}
             </div>
           )}
         </Form.List>
