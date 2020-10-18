@@ -11,6 +11,7 @@ const CURRENT_HACKATHON = "HackGT 7";
 const HACKGT_DEVPOST = process.env.DEVPOST_URL;
 let ballotRoutes = express.Router();
 
+
 var isAuth = (req) => {
     const auth = req.headers.authorization;
 	if (auth && typeof auth === "string" && auth.includes(" ")) {
