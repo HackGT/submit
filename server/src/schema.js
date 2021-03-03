@@ -87,14 +87,13 @@ var submissionSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
-    wherebyRoom: {
-        meetingId: String,
-        roomUrl: String,
-        hostRoomUrl: String,
-        startDate: String,
-        endDate: String
+    meetingUrl: {
+        type: String,
+        required: true,
+        unique: true
     },
     expo: {
         type: Number

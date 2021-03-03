@@ -4,7 +4,6 @@ const express = require("express");
 const axios = require("axios");
 const rp = require("request-promise");
 const cheerio = require("cheerio");
-const { DateTime } = require("luxon");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -240,28 +239,6 @@ submissionRoutes.route("/create").post(async (req, res) => {
             return res.send({ error: false })
         }
     }
-    var resp = {}
-    try {
-        resp = await axios({
-            method: 'POST',
-            url: "https://api.whereby.dev/v1/meetings",
-            headers: {
-                "Authorization": 'Bearer ' + process.env.WHEREBY_KEY,
-                "Content-Type": "application/json"
-            },
-            data: JSON.stringify({
-                isLocked: true,
-                roomNamePrefix: "/expo-",
-                roomMode: "group",
-                startDate: DateTime.local().plus({ hours: 1 }).toISO(),
-                endDate: DateTime.local().plus({ hours: 20 }).toISO(),
-                fields: ["hostRoomUrl"]
-            })
-        });
-    } catch (err) {
-        console.log(err)
-        return res.send({ error: true, message: "Error creating Whereby" });
-    }
 
     try {
         await Submission.create({
@@ -271,7 +248,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
             members: await User.find({ email: data.members.map(member => member.email) }),
             prizes: data.prizes,
             round: flag ? 'FLAGGED' : 'SUBMITTED',
-            wherebyRoom: resp.data
+            meetingUrl: `https://meet.hack.gt/room/${encodeURIComponent(data.name)}`
         });
     } catch (err) {
         console.error(err);
