@@ -335,7 +335,7 @@ submissionRoutes.route("/export").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
-        }).select('name devpost prizes wherebyRoom projectId')
+        }).select('name devpost prizes meetingUrl projectId')
         return res.send({ error: false, projects: projects })
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })

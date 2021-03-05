@@ -9,7 +9,6 @@ secrets:
   - GROUND_TRUTH_SECRET
   - SESSION_SECRET
   - GRAPHQL_AUTH
-  - WHEREBY_KEY
   - SUBMIT_SECRET
 
 health:

@@ -37,7 +37,7 @@ const SubmissionDetails: React.FC = (props) => {
       case "ACCEPTED":
         return <Alert
           message={
-            <Text>Congrats on moving to the next round! Here is the video link for you to join the judging call: <a href={data.submission.wherebyRoom.hostRoomUrl} target="_blank" rel="noopener noreferrer">Join Here</a>. You are in expo number {data.submission.expo || 1}.</Text>}
+            <Text>Congrats on moving to the next round! Here is the video link for you to join the judging call: <a href={data.submission.meetingUrl} target="_blank" rel="noopener noreferrer">Join Here</a>. You are in expo number {data.submission.expo || 1}.</Text>}
           type="success"
           showIcon
         />;

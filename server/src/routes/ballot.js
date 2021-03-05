@@ -12,7 +12,7 @@ ballotRoutes.route("/export").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
-        }).select('name devpost prizes wherebyRoom projectId');
+        }).select('name devpost prizes meetingUrl projectId');
 
         const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
 
@@ -26,7 +26,7 @@ ballotRoutes.route("/exportAccepted").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             round: 'ACCEPTED'
-        }).select('name devpost prizes wherebyRoom projectId expo');
+        }).select('name devpost prizes meetingUrl projectId expo');
 
         const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
 
