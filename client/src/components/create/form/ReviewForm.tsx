@@ -102,7 +102,7 @@ const ReviewForm: React.FC<Props> = (props) => {
             <Form.Item
               name="name"
               rules={[FORM_RULES.requiredRule]}
-              label="Team Name"
+              label="Project Name"
             >
               <Input disabled={true} />
             </Form.Item>
