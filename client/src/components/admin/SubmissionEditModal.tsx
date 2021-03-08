@@ -150,7 +150,7 @@ const SubmissionEditModal: React.FC<Props> = (props) => {
               <Form.Item
                 name="name"
                 rules={[FORM_RULES.requiredRule]}
-                label="Submission Name"
+                label="Project Name"
               >
                 <Input placeholder="Alexa Assistant" />
               </Form.Item>
