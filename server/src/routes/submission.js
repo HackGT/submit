@@ -4,7 +4,6 @@ const express = require("express");
 const axios = require("axios");
 const rp = require("request-promise");
 const cheerio = require("cheerio");
-const { DateTime } = require("luxon");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -114,7 +113,7 @@ validateTeam = async (members, user_email) => {
     - Ensure url is the right devpost url
     - Ensure project isn't submitted to multiple hackathons
 */
-validateDevpost = async (devpost_url) => {
+validateDevpost = async (devpost_url, submission_name) => {
     if (!devpost_url) {
         return { error: true, message: "No url specified" };
     }
@@ -143,20 +142,25 @@ validateDevpost = async (devpost_url) => {
             }
         }
     });
-    devpost_count = await Submission.count({ devpost: devpost_url });
+
+    const devpost_count = await Submission.count({ devpost: devpost_url });
+    const name_count = await Submission.count({ name: submission_name });
 
     let eligible = submitted
         && (devpost_urls.length === 1)
-        && (devpost_count == 0);
+        && (devpost_count === 0)
+        && (name_count === 0);
 
     if (eligible) {
         return { error: false };
     } else if (!submitted) {
         return { error: true, message: "Please submit your project to the " + CURRENT_HACKATHON + " devpost and try again. Follow the instructions below." };
     } else if (devpost_urls.length !== 1) {
-        return { error: true, message: "Multiple hackathon submissions" };
-    } else if (!(devpost_count == 0)) {
-        return { error: true, message: "Duplicate devpost submission" };
+        return { error: true, message: "You cannot have multiple hackathon submissions." };
+    } else if (devpost_count !== 0) {
+        return { error: true, message: "A submission with this Devpost URL already exists." };
+    } else if (name_count !== 0) {
+        return { error: true, message: "A submission with this name already exists." };
     }
     return { error: true, message: "Please contact help desk" };
 
@@ -206,7 +210,7 @@ submissionRoutes.route("/prize-validation").post((req, res) => {
 });
 
 submissionRoutes.route("/devpost-validation").post(async (req, res) => {
-    const resp = await validateDevpost(req.body.devpost);
+    const resp = await validateDevpost(req.body.devpost, req.body.name);
     if (resp.message == "Multiple hackathon submissions") {
         return res.send({ error: false })
     }
@@ -232,35 +236,13 @@ submissionRoutes.route("/create").post(async (req, res) => {
         return res.send({ error: true, message: "Invalid team" })
     }
 
-    const devpostValidation = await validateDevpost(data.devpost)
+    const devpostValidation = await validateDevpost(data.devpost, data.name);
     if (devpostValidation.error) {
         if (devpostValidation.message == "Multiple hackathon submissions") {
             flag = true
         } else {
             return res.send({ error: false })
         }
-    }
-    var resp = {}
-    try {
-        resp = await axios({
-            method: 'POST',
-            url: "https://api.whereby.dev/v1/meetings",
-            headers: {
-                "Authorization": 'Bearer ' + process.env.WHEREBY_KEY,
-                "Content-Type": "application/json"
-            },
-            data: JSON.stringify({
-                isLocked: true,
-                roomNamePrefix: "/expo-",
-                roomMode: "group",
-                startDate: DateTime.local().plus({ hours: 1 }).toISO(),
-                endDate: DateTime.local().plus({ hours: 20 }).toISO(),
-                fields: ["hostRoomUrl"]
-            })
-        });
-    } catch (err) {
-        console.log(err)
-        return res.send({ error: true, message: "Error creating Whereby" });
     }
 
     try {
@@ -271,7 +253,7 @@ submissionRoutes.route("/create").post(async (req, res) => {
             members: await User.find({ email: data.members.map(member => member.email) }),
             prizes: data.prizes,
             round: flag ? 'FLAGGED' : 'SUBMITTED',
-            wherebyRoom: resp.data
+            meetingUrl: `https://meet.hack.gt/room/${encodeURIComponent(data.name)}`
         });
     } catch (err) {
         console.error(err);
@@ -353,7 +335,7 @@ submissionRoutes.route("/export").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             round: 'SUBMITTED'
-        }).select('name devpost prizes wherebyRoom projectId')
+        }).select('name devpost prizes meetingUrl projectId')
         return res.send({ error: false, projects: projects })
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })

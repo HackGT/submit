@@ -44,7 +44,7 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
     <>
       <Alert type="error" style={{ marginBottom: "15px" }} message={<strong>All information you submit in this form is FINAL, including registering for sponsor challenges. There will be no changes made after you submit your project.</strong>} />
       <Title level={2}>Devpost Info</Title>
-      <Text>Please create a submission on our <a href="https://hackgt2020.devpost.com" target="_blank">devpost</a>, and list the URL for your submission and team name below. Make sure to include a 2 min project demo with your devpost submission.</Text>
+      <Text>Please create a submission on our <a href="https://hackgt2020.devpost.com" target="_blank">Devpost</a> and list the URL for your submission and project name below. Make sure to include a 2-minute project demo with your Devpost submission.</Text>
       <Form
         name="devpost"
         onFinish={onFinish}
@@ -72,7 +72,7 @@ const DevpostInfoForm: React.FC<Props> = (props) => {
             <Form.Item
               name="name"
               rules={[FORM_RULES.requiredRule]}
-              label="Team Name (Should match devpost submission name)"
+              label="Project Name (should match Devpost submission name)"
             >
               <Input placeholder="Alexa Assistant" />
             </Form.Item>

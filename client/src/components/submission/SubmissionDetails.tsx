@@ -37,7 +37,7 @@ const SubmissionDetails: React.FC = (props) => {
       case "ACCEPTED":
         return <Alert
           message={
-            <Text>Congrats on moving to the next round! Here is the video link for you to join the judging call: <a href={data.submission.wherebyRoom.hostRoomUrl} target="_blank" rel="noopener noreferrer">Join Here</a>. You are in expo number {data.submission.expo || 1}.</Text>}
+            <Text>Congrats on moving to the next round! If the conference below isn't working, the link to join the judging call can be found <a href={data.submission.meetingUrl} target="_blank" rel="noopener noreferrer"><b>here</b></a>. You are in expo number {data.submission.expo || 1}.</Text>}
           type="success"
           showIcon
         />;
@@ -62,6 +62,16 @@ const SubmissionDetails: React.FC = (props) => {
         <Descriptions.Item label={<Label name="Devpost" />}><a href={data.submission.devpost}>{data.submission.devpost}</a></Descriptions.Item>
         <Descriptions.Item label={<Label name="Selected Prizes" />}>{data.submission.prizes.join(', ')}</Descriptions.Item>
       </Descriptions>
+
+      <Title level={2} style={{ textAlign: "center", marginTop: "25px" }}>
+        Judging Call
+      </Title>
+      <iframe
+        src={data.submission.meetingUrl}
+        allow="camera; microphone; fullscreen; speaker"
+        width="90%"
+        style={{ height: "75vh", margin: "15px auto" }}>
+      </iframe>
     </div>
   )
 }
