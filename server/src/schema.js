@@ -59,7 +59,7 @@ exports.Hackathon = mongoose.model("Hackathon", new mongoose.Schema({
 }));
 
 exports.Config = mongoose.model("Config", new mongoose.Schema({
-    submissionsOpen: Boolean,
+    submissionsOpen: Boolean
 }));
 
 exports.Video = mongoose.model("Videos", new mongoose.Schema({
