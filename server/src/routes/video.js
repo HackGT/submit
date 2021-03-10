@@ -51,7 +51,7 @@ videoRoutes.route("/videoStatus").get(async (req, res) => {
     return res.send({ isActive: videosActive[0].isActive });
 });
 
-videoRoutes.route("/validateRoomName").get(async (req, res) => {
+videoRoutes.route("/validateRoomName/:name").get(async (req, res) => {
     try {
         const projects = await Submission.find({
             name: req.params.name
