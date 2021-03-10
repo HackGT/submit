@@ -20,6 +20,13 @@ const AdminHome: React.FC = () => {
     }
   });
 
+  const [videosActive, setVideosActive] = useState<any>(false);
+  axios.get("/video/videoStatus").then(result => {
+      if (result.data.isActive === true) {
+          setVideosActive(true);
+      }
+  });
+
   if (loading) {
     return <LoadingDisplay />;
   }
@@ -28,22 +35,6 @@ const AdminHome: React.FC = () => {
     console.error(data.error);
     return <ErrorDisplay />;
   }
-
-    const [videosActive, setVideosActive] = useState<any>(false);
-    axios.get("/video/videoStatus").then(result => {
-        if (result.data.isActive === true) {
-            setVideosActive(true);
-        }
-    });
-
-    if (loading) {
-        return <LoadingDisplay />;
-    }
-
-    if (data.error) {
-        console.error(data.error);
-        return <ErrorDisplay />;
-    }
 
   const createStatus = (round: string) => {
     switch (round) {
