@@ -130,6 +130,21 @@ const AdminHome: React.FC = () => {
             });
     };
 
+    const endCalls = () => {
+        axios.post("/video/endCalls")
+            .then((res) => {
+                if (res.data.error) {
+                    message.error('Error ending calls', 2);
+                } else {
+                    message.warn('Calls ended', 2);
+                }
+            })
+            .catch((err) => {
+                message.error("Error: Please ask for help", 2);
+                console.log(err);
+            });
+    };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
       <Title level={2}>All Submissions</Title>
@@ -142,6 +157,8 @@ const AdminHome: React.FC = () => {
       <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
         <Switch size="small" checked={videosActive} onChange={handleVideosActiveChange} />
       </div>
+
+      <Button onClick={endCalls}>End Judging Calls</Button>
 
       <ConfigProvider
         renderEmpty={() => (

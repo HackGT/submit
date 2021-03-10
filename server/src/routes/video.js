@@ -1,7 +1,9 @@
 let { Video, Submission } = require('../schema')
+const fetch = require('node-fetch');
 const express = require("express");
 
 let videoRoutes = express.Router();
+const MEET_URL = process.env.MEET_URL || "https://meet.hack.gt";
 
 videoRoutes.route("/activateVideos").post(async (req, res) => {
     if (!req.user.admin) {
@@ -63,6 +65,22 @@ videoRoutes.route("/validateRoomName/:name").get(async (req, res) => {
         } else {
             return res.send({ error: false, valid: false })
         }
+    } catch (err) {
+        return res.send({ error: true, message: "Error: " + err })
+    }
+});
+
+videoRoutes.route("/endCalls").post(async (req, res) => {
+    try {
+        const endCalls = await fetch(MEET_URL + '/endCalls',
+            {
+                method: 'post',
+                headers: {
+                    'Authorization': 'Bearer ' + process.env.SUBMIT_SECRET,
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => res.json());
+        return res.send(endCalls);
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })
     }
