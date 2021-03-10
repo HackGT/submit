@@ -137,9 +137,12 @@ const AdminHome: React.FC = () => {
       <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
         <Switch size="small" checked={submissionsOpen} onChange={handleSubmissionsOpenChange} />
       </div>
+
+      <Title level={4} style={{ marginTop: 0 }}>Videos Active</Title>
       <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
         <Switch size="small" checked={videosActive} onChange={handleVideosActiveChange} />
       </div>
+
       <ConfigProvider
         renderEmpty={() => (
           <Empty description="No Submissions" />
