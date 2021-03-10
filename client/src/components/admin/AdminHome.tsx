@@ -29,6 +29,22 @@ const AdminHome: React.FC = () => {
     return <ErrorDisplay />;
   }
 
+    const [videosActive, setVideosActive] = useState<any>(false);
+    axios.get("/video/videoStatus").then(result => {
+        if (result.data.isActive === true) {
+            setVideosActive(true);
+        }
+    });
+
+    if (loading) {
+        return <LoadingDisplay />;
+    }
+
+    if (data.error) {
+        console.error(data.error);
+        return <ErrorDisplay />;
+    }
+
   const createStatus = (round: string) => {
     switch (round) {
       case "FLAGGED":
@@ -89,12 +105,49 @@ const AdminHome: React.FC = () => {
       });
   };
 
+    const handleVideosActiveChange = (videosActive: Boolean) => {
+        videosActive ? activateVideos() : closeVideos();
+    };
+
+    const closeVideos = () => {
+        axios.post("/video/closeVideos")
+            .then((res) => {
+                if (res.data.error) {
+                    message.error(res.data.message, 2);
+                } else {
+                    setVideosActive(res.data.isActive);
+                }
+            })
+            .catch((err) => {
+                message.error("Error: Please ask for help", 2);
+                console.log(err);
+            });
+    };
+
+    const activateVideos = () => {
+        axios.post("/video/activateVideos")
+            .then((res) => {
+                if (res.data.error) {
+                    message.error(res.data.message, 2);
+                } else {
+                    setVideosActive(res.data.isActive);
+                }
+            })
+            .catch((err) => {
+                message.error("Error: Please ask for help", 2);
+                console.log(err);
+            });
+    };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
       <Title level={2}>All Submissions</Title>
       <Title level={4} style={{ marginTop: 0 }}>Submissions Open</Title>
       <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
         <Switch size="small" checked={submissionsOpen} onChange={handleSubmissionsOpenChange} />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
+        <Switch size="small" checked={videosActive} onChange={handleVideosActiveChange} />
       </div>
       <ConfigProvider
         renderEmpty={() => (
