@@ -56,8 +56,9 @@ videoRoutes.route("/validateRoomName").get(async (req, res) => {
         const projects = await Submission.find({
             name: req.params.name
         }).select('name');
+        const videosActive = await Video.find({ isActive: true});
 
-        if (projects.length > 0) {
+        if (projects.length > 0 && videosActive.length > 0 && videosActive[0].isActive) {
             return res.send({ error: false, valid: true })
         } else {
             return res.send({ error: false, valid: false })
