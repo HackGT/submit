@@ -158,7 +158,7 @@ const AdminHome: React.FC = () => {
         <Switch size="small" checked={videosActive} onChange={handleVideosActiveChange} />
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
+      <div style={{ display: "flex", flexDirection: "column", width: "15%", marginBottom: "30px" }}>
           <Button onClick={endCalls}>End Judging Calls</Button>
       </div>
 
