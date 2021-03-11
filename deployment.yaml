@@ -10,6 +10,7 @@ secrets:
   - SESSION_SECRET
   - GRAPHQL_AUTH
   - SUBMIT_SECRET
+  - CURRENT_HACKATHON
 
 health:
   path: /status
