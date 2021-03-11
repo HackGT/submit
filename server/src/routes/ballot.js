@@ -1,10 +1,13 @@
-const { User, Submission } = require("../schema");
+const { Submission } = require("../schema");
 const express = require("express");
-const axios = require("axios");
-const rp = require("request-promise");
-const { DateTime } = require("luxon");
 const dotenv = require("dotenv");
 const { config } = require("../common");
+
+dotenv.config();
+
+const CURRENT_HACKATHON = process.env.CURRENT_HACKATHON || "HealthTech";
+const allPrizes = config.hackathons[CURRENT_HACKATHON]
+    ? [].concat(...Object.values(config.hackathons[CURRENT_HACKATHON])) : [];
 
 let ballotRoutes = express.Router();
 
@@ -13,10 +16,7 @@ ballotRoutes.route("/export").get(async (req, res) => {
         const projects = await Submission.find({
             round: 'SUBMITTED'
         }).select('name devpost prizes meetingUrl projectId');
-
-        const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
-
-        return res.send({ error: false, projects: projects, categories: categories })
+        return res.send({ error: false, projects, categories: allPrizes })
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })
     }
@@ -27,10 +27,7 @@ ballotRoutes.route("/exportAccepted").get(async (req, res) => {
         const projects = await Submission.find({
             round: 'ACCEPTED'
         }).select('name devpost prizes meetingUrl projectId expo');
-
-        const categories = config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
-
-        return res.send({ error: false, projects: projects, categories: categories })
+        return res.send({ error: false, projects, categories: allPrizes })
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })
     }

@@ -9,11 +9,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
-const CURRENT_HACKATHON = "HackGT 7";
 const HACKGT_DEVPOST = process.env.DEVPOST_URL || "https://hackgt2020.devpost.com/";
 
-let submissionRoutes = express.Router();
+const CURRENT_HACKATHON = process.env.CURRENT_HACKATHON || "HealthTech";
+const allPrizes = config.hackathons[CURRENT_HACKATHON]
+    ? [].concat(...Object.values(config.hackathons[CURRENT_HACKATHON])) : [];
 
+let submissionRoutes = express.Router();
 
 /*
     - Query emails from check-in and ensure users accepted to event
@@ -173,29 +175,20 @@ validateDevpost = async (devpost_url, submission_name) => {
 getEligiblePrizes = (users) => {
     switch (CURRENT_HACKATHON) {
         case "HackGT 7":
-
             let numEmerging = 0;
-
             users.forEach(user => {
-                if (!user || !user.confirmationBranch) {
-                    return {
-                        error: true,
-                        message: "User: " + user.email + " does not have a confirmation branch"
-                    };
-                }
-
-                if (user.confirmationBranch === "Emerging Participant Confirmation") {
+                if (!user || !user.confirmationBranch)
+                    return { error: true, message: "User: " + user.email + " does not have a confirmation branch" };
+                if (user.confirmationBranch === "Emerging Participant Confirmation")
                     numEmerging++;
-                }
             });
 
             // A team must be greater than 50% emerging to be eligible for emerging prizes
-            if (numEmerging / users.length > 0.5) {
-                return config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes);
-            }
-            return config.hackathons["HackGT 7"].sponsorPrizes;
+            return (numEmerging / users.length <= 0.5)
+                ? config.hackathons[CURRENT_HACKATHON].sponsorPrizes
+                : allPrizes;
         default:
-            return [];
+            return allPrizes;
     }
 }
 
@@ -326,7 +319,7 @@ submissionRoutes.route("/all").get(async (req, res) => {
 });
 
 submissionRoutes.route("/all-prizes").get(async (req, res) => {
-    return res.send({ error: false, prizes: config.hackathons["HackGT 7"].emergingPrizes.concat(config.hackathons["HackGT 7"].sponsorPrizes) });
+    return res.send({ error: false, prizes: allPrizes });
 })
 
 submissionRoutes.route("/export").get(async (req, res) => {

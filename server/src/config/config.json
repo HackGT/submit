@@ -27,6 +27,15 @@
         "MLH - Best hardware hack",
         "MLH - Best use of DataStax Astra"
       ]
+    },
+    "HealthTech": {
+      "prizes": [
+        "Mental Health",
+        "Inpatient Health",
+        "Fitness and Nutrition",
+        "Women's and Reproductive Health",
+        "Global and Rural Health"
+      ]
     }
   }
 }
