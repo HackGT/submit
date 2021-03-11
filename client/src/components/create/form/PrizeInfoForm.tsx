@@ -69,7 +69,7 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
               label="Prizes"
               initialValue={[]}
             >
-              <Select placeholder="Select prizes" mode="multiple" options={prizeOptions} showSearch optionFilterProp="label" />
+              <Select placeholder="Select Prize" options={prizeOptions} showSearch optionFilterProp="label" />
             </Form.Item>
           </Col>
         </Row>
