@@ -1,13 +1,11 @@
-let { Config } = require('../schema')
 const express = require("express");
+
+let { Config } = require('../schema');
+const { isAdmin } = require("../auth/auth");
 
 let configRoutes = express.Router();
 
-configRoutes.route("/openSubmissions").post(async (req, res) => {
-    if (!req.user.admin) {
-        return res.send({error: true, message: "User is not an admin"});
-    }
-
+configRoutes.route("/openSubmissions").post(isAdmin, async (req, res) => {
     const config = await Config.find({});
     if (config.length === 0) {
         try {
@@ -26,12 +24,8 @@ configRoutes.route("/openSubmissions").post(async (req, res) => {
     }
 });
 
-configRoutes.route("/closeSubmissions").post(async (req, res) => {
-    if (!req.user.admin) {
-        return res.send({error: true, message: "User is not an admin"});
-    }
-
-    const submissionsOpen = await Config.find({ submissionsOpen: true});
+configRoutes.route("/closeSubmissions").post(isAdmin, async (req, res) => {
+    const submissionsOpen = await Config.find({ submissionsOpen: true });
     if (submissionsOpen.length === 0) {
         return res.send({ error: false, message: "Submissions already closed" });
     }
@@ -44,7 +38,7 @@ configRoutes.route("/closeSubmissions").post(async (req, res) => {
 });
 
 configRoutes.route("/submissionStatus").get(async (req, res) => {
-    const submissionsOpen = await Config.find({ submissionsOpen: true});
+    const submissionsOpen = await Config.find({ submissionsOpen: true });
     if (submissionsOpen.length === 0) {
         return res.send({ submissionsOpen: false });
     }

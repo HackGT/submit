@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
           renderItem={(submission: any) => (
             <List.Item>
               <Link to={"/submission/" + submission._id}>
-                <Card title={submission.hackathon} cover={<img alt="" src="/public/hackgt7.jpg" />} hoverable>
+                <Card title={submission.hackathon} cover={<img alt="" src="/public/health-tech.png" />} hoverable>
                   <Meta
                     title={submission.name}
                     description={submission.members.map((item: any) => item.name).join(', ')}

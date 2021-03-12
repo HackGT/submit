@@ -30,7 +30,7 @@ const SubmissionDetails: React.FC = (props) => {
       case "FLAGGED":
       case "SUBMITTED":
         return <Alert
-          message="Thank you for your submission to HackGT 7! Please check back later to see your submission status."
+          message="Thank you for your submission to HealthTech! Please check back later to see your submission status."
           type="info"
           showIcon
         />;
@@ -43,7 +43,7 @@ const SubmissionDetails: React.FC = (props) => {
         />;
       case "REJECTED":
         return <Alert
-          message="Thank you for your submission to HackGT 7! After reviewing your submission, we will not be moving it forward to round two of judging as it does not meet our live judging criteria. We hope you enjoyed the event and join us for future HackGT events! We invite you to stay for live judging and closing ceremonies."
+          message="Thank you for your submission to HealthTech! After reviewing your submission, we will not be moving it forward to round two of judging as it does not meet our live judging criteria. We hope you enjoyed the event and join us for future HackGT events! We invite you to stay for live judging and closing ceremonies."
           type="info"
           showIcon
         />;
@@ -63,15 +63,17 @@ const SubmissionDetails: React.FC = (props) => {
         <Descriptions.Item label={<Label name="Selected Prizes" />}>{data.submission.prizes.join(', ')}</Descriptions.Item>
       </Descriptions>
 
-      <Title level={2} style={{ textAlign: "center", marginTop: "25px" }}>
-        Judging Call
-      </Title>
-      <iframe
-        src={data.submission.meetingUrl}
-        allow="camera; microphone; fullscreen; speaker"
-        width="90%"
-        style={{ height: "75vh", margin: "15px auto" }}>
-      </iframe>
+      {data.submission.round === "ACCEPTED" &&
+        <>
+          <Title level={2} style={{ textAlign: "center", marginTop: "25px" }}>Judging Call</Title>
+          <iframe
+            src={data.submission.meetingUrl}
+            allow="camera; microphone; fullscreen; speaker"
+            width="90%"
+            style={{ height: "75vh", margin: "15px auto" }}>
+          </iframe>
+        </>
+      }
     </div>
   )
 }

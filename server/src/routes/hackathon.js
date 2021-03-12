@@ -1,5 +1,6 @@
-let { Hackathon } = require('../schema')
 const express = require("express");
+
+let { Hackathon } = require('../schema')
 
 let hackathonRoutes = express.Router();
 

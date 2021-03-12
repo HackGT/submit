@@ -1,19 +1,14 @@
-const { User, Submission, Config } = require("../schema");
-const { config } = require("../common");
 const express = require("express");
 const axios = require("axios");
 const rp = require("request-promise");
 const cheerio = require("cheerio");
 const dotenv = require("dotenv");
 
+const { User, Submission, Config } = require("../schema");
+const { config, CURRENT_HACKATHON, GRAPHQL_URL, HACKGT_DEVPOST, ALL_PRIZES, HOSTNAME } = require("../common");
+const { isAdmin } = require("../auth/auth");
+
 dotenv.config();
-
-const GRAPHQL_URL = process.env.GRAPHQL_URL || 'https://registration.2020.hack.gt/graphql';
-const HACKGT_DEVPOST = process.env.DEVPOST_URL || "https://hackgt2020.devpost.com/";
-
-const CURRENT_HACKATHON = process.env.CURRENT_HACKATHON || "HealthTech";
-const allPrizes = config.hackathons[CURRENT_HACKATHON]
-    ? [].concat(...Object.values(config.hackathons[CURRENT_HACKATHON])) : [];
 
 let submissionRoutes = express.Router();
 
@@ -69,7 +64,7 @@ validateTeam = async (members, user_email) => {
 
         const registrationUsers = res.data.data.search_user.users;
 
-        if (registrationUsers.length === 0 || !registrationUsers[0].confirmed) {
+        if (registrationUsers.length === 0 || !registrationUsers[0].confirmed || registrationUsers[0].email !== email) {
             errConfirmed = email;
             return;
         }
@@ -120,8 +115,7 @@ validateDevpost = async (devpost_url, submission_name) => {
         return { error: true, message: "No url specified" };
     }
 
-    const hostname = new URL(devpost_url).hostname;
-    if (hostname !== "devpost.com") {
+    if (new URL(devpost_url).hostname !== HOSTNAME) {
         return { error: true, message: "Invalid URL: Not devpost domain" };
     }
 
@@ -153,18 +147,20 @@ validateDevpost = async (devpost_url, submission_name) => {
         && (devpost_count === 0)
         && (name_count === 0);
 
-    if (eligible) {
-        return { error: false };
-    } else if (!submitted) {
-        return { error: true, message: "Please submit your project to the " + CURRENT_HACKATHON + " devpost and try again. Follow the instructions below." };
-    } else if (devpost_urls.length !== 1) {
-        return { error: true, message: "You cannot have multiple hackathon submissions." };
-    } else if (devpost_count !== 0) {
-        return { error: true, message: "A submission with this Devpost URL already exists." };
-    } else if (name_count !== 0) {
-        return { error: true, message: "A submission with this name already exists." };
-    }
-    return { error: true, message: "Please contact help desk" };
+    return { error: false };
+
+    // if (eligible) {
+    //     return { error: false };
+    // } else if (!submitted) {
+    //     return { error: true, message: "Please submit your project to the " + CURRENT_HACKATHON + " devpost and try again. Follow the instructions below." };
+    // } else if (devpost_urls.length !== 1) {
+    //     return { error: true, message: "You cannot have multiple hackathon submissions." };
+    // } else if (devpost_count !== 0) {
+    //     return { error: true, message: "A submission with this Devpost URL already exists." };
+    // } else if (name_count !== 0) {
+    //     return { error: true, message: "A submission with this name already exists." };
+    // }
+    // return { error: true, message: "Please contact help desk" };
 
 }
 
@@ -186,9 +182,9 @@ getEligiblePrizes = (users) => {
             // A team must be greater than 50% emerging to be eligible for emerging prizes
             return (numEmerging / users.length <= 0.5)
                 ? config.hackathons[CURRENT_HACKATHON].sponsorPrizes
-                : allPrizes;
+                : ALL_PRIZES;
         default:
-            return allPrizes;
+            return ALL_PRIZES;
     }
 }
 
@@ -258,10 +254,8 @@ submissionRoutes.route("/create").post(async (req, res) => {
     res.send({ error: false });
 });
 
-submissionRoutes.route("/update").post(async (req, res) => {
-    if (!req.user.admin) {
-        return res.send({ error: true, message: "User is not an admin" });
-    } else if (!req.body.id || !req.body.data) {
+submissionRoutes.route("/update").post(isAdmin, async (req, res) => {
+    if (!req.body.id || !req.body.data) {
         return res.send({ error: true, message: "Request data not provided" });
     }
 
@@ -306,11 +300,7 @@ submissionRoutes.route("/dashboard").get(async (req, res) => {
     }
 });
 
-submissionRoutes.route("/all").get(async (req, res) => {
-    if (!req.user.admin) {
-        return res.send({ error: true, message: "User is not an admin" });
-    }
-
+submissionRoutes.route("/all").get(isAdmin, async (req, res) => {
     try {
         return res.send(await Submission.find().populate("members"));
     } catch (err) {
@@ -320,7 +310,7 @@ submissionRoutes.route("/all").get(async (req, res) => {
 });
 
 submissionRoutes.route("/all-prizes").get(async (req, res) => {
-    return res.send({ error: false, prizes: allPrizes });
+    return res.send({ error: false, prizes: ALL_PRIZES });
 })
 
 submissionRoutes.route("/export").get(async (req, res) => {

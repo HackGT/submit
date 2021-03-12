@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Steps, Typography} from "antd";
+import { Steps, Typography } from "antd";
 import TeamInfoForm from "./form/TeamInfoForm";
 import PrizeInfoForm from "./form/PrizeInfoForm";
 import DevpostInfoForm from "./form/DevpostInfoForm";
@@ -66,26 +66,26 @@ const SubmissionFormContainer: React.FC<Props> = (props) => {
   console.log(submissionsOpen);
 
   return (
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
-          {submissionsOpen &&
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
+      {submissionsOpen &&
+        <div>
           <div>
-            <div>
-                {renderComponent(current)}
-            </div>
-            <Steps current={current} style={{ marginBottom: "16px" }}>
-                <Step key={0} title="Team Info" />
-                <Step key={1} title="Prize Info" />
-                <Step key={2} title="Devpost Info" />
-                <Step key={3} title="Review" />
-            </Steps>
-          </div>}
-          {!submissionsOpen &&
-          <div>
-            <Title level={2}>Create Submission</Title>
-            <Title level={5}>Submissions are closed</Title>
+            {renderComponent(current)}
           </div>
-          }
-      </div>
+          <Steps current={current} style={{ marginBottom: "16px" }}>
+            <Step key={0} title="Team Info" />
+            <Step key={1} title="Prize Info" />
+            <Step key={2} title="Devpost Info" />
+            <Step key={3} title="Review" />
+          </Steps>
+        </div>}
+      {!submissionsOpen &&
+        <div>
+          <Title level={2}>Create Submission</Title>
+          <Title level={5}>Submissions are closed</Title>
+        </div>
+      }
+    </div>
   )
 }
 

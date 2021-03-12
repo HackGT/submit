@@ -22,9 +22,9 @@ const AdminHome: React.FC = () => {
 
   const [videosActive, setVideosActive] = useState<any>(false);
   axios.get("/video/videoStatus").then(result => {
-      if (result.data.isActive === true) {
-          setVideosActive(true);
-      }
+    if (result.data.isActive === true) {
+      setVideosActive(true);
+    }
   });
 
   if (loading) {
@@ -96,54 +96,54 @@ const AdminHome: React.FC = () => {
       });
   };
 
-    const handleVideosActiveChange = (videosActive: Boolean) => {
-        videosActive ? activateVideos() : closeVideos();
-    };
+  const handleVideosActiveChange = (videosActive: Boolean) => {
+    videosActive ? activateVideos() : closeVideos();
+  };
 
-    const closeVideos = () => {
-        axios.post("/video/closeVideos")
-            .then((res) => {
-                if (res.data.error) {
-                    message.error(res.data.message, 2);
-                } else {
-                    setVideosActive(res.data.isActive);
-                }
-            })
-            .catch((err) => {
-                message.error("Error: Please ask for help", 2);
-                console.log(err);
-            });
-    };
+  const closeVideos = () => {
+    axios.post("/video/closeVideos")
+      .then((res) => {
+        if (res.data.error) {
+          message.error(res.data.message, 2);
+        } else {
+          setVideosActive(res.data.isActive);
+        }
+      })
+      .catch((err) => {
+        message.error("Error: Please ask for help", 2);
+        console.log(err);
+      });
+  };
 
-    const activateVideos = () => {
-        axios.post("/video/activateVideos")
-            .then((res) => {
-                if (res.data.error) {
-                    message.error(res.data.message, 2);
-                } else {
-                    setVideosActive(res.data.isActive);
-                }
-            })
-            .catch((err) => {
-                message.error("Error: Please ask for help", 2);
-                console.log(err);
-            });
-    };
+  const activateVideos = () => {
+    axios.post("/video/activateVideos")
+      .then((res) => {
+        if (res.data.error) {
+          message.error(res.data.message, 2);
+        } else {
+          setVideosActive(res.data.isActive);
+        }
+      })
+      .catch((err) => {
+        message.error("Error: Please ask for help", 2);
+        console.log(err);
+      });
+  };
 
-    const endCalls = () => {
-        axios.post("/video/endCalls")
-            .then((res) => {
-                if (res.data.error) {
-                    message.error('Error ending calls', 2);
-                } else {
-                    message.warn('Calls ended', 2);
-                }
-            })
-            .catch((err) => {
-                message.error("Error: Please ask for help", 2);
-                console.log(err);
-            });
-    };
+  const endCalls = () => {
+    axios.post("/video/endCalls")
+      .then((res) => {
+        if (res.data.error) {
+          message.error('Error ending calls', 2);
+        } else {
+          message.warn('Calls ended', 2);
+        }
+      })
+      .catch((err) => {
+        message.error("Error: Please ask for help", 2);
+        console.log(err);
+      });
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
@@ -154,12 +154,13 @@ const AdminHome: React.FC = () => {
       </div>
 
       <Title level={4} style={{ marginTop: 0 }}>Videos Active</Title>
+      <Text>Note: Only submissions who have been accepted will have video calls that work</Text>
       <div style={{ display: "flex", flexDirection: "column", width: "5%", marginBottom: "30px" }}>
         <Switch size="small" checked={videosActive} onChange={handleVideosActiveChange} />
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", width: "15%", marginBottom: "30px" }}>
-          <Button onClick={endCalls}>End Judging Calls</Button>
+        <Button onClick={endCalls}>End Judging Calls</Button>
       </div>
 
       <ConfigProvider

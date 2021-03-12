@@ -49,7 +49,12 @@ exports.isAdmin = (request, response, next) => {
 
 	if (process.env.PRODUCTION !== "true" || (request.user && request.user.admin)) {
 		next();
-	} else if (auth && typeof auth === "string" && auth.includes(" ")) {
+	} else if (request.user && !request.user.admin) {
+        response.status(401).json({
+            error: true,
+            message: "User is not an admin"
+        });
+    } else if (auth && typeof auth === "string" && auth.includes(" ")) {
 		const key = auth.split(" ")[1].toString();
 		if (key === process.env.SUBMIT_SECRET) {
 			next();

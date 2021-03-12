@@ -1,13 +1,9 @@
 const { Submission } = require("../schema");
 const express = require("express");
 const dotenv = require("dotenv");
-const { config } = require("../common");
+const { ALL_PRIZES } = require("../common");
 
 dotenv.config();
-
-const CURRENT_HACKATHON = process.env.CURRENT_HACKATHON || "HealthTech";
-const allPrizes = config.hackathons[CURRENT_HACKATHON]
-    ? [].concat(...Object.values(config.hackathons[CURRENT_HACKATHON])) : [];
 
 let ballotRoutes = express.Router();
 
@@ -16,7 +12,7 @@ ballotRoutes.route("/export").get(async (req, res) => {
         const projects = await Submission.find({
             round: 'SUBMITTED'
         }).select('name devpost prizes meetingUrl projectId');
-        return res.send({ error: false, projects, categories: allPrizes })
+        return res.send({ error: false, projects, categories: ALL_PRIZES })
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })
     }
@@ -27,7 +23,7 @@ ballotRoutes.route("/exportAccepted").get(async (req, res) => {
         const projects = await Submission.find({
             round: 'ACCEPTED'
         }).select('name devpost prizes meetingUrl projectId expo');
-        return res.send({ error: false, projects, categories: allPrizes })
+        return res.send({ error: false, projects, categories: ALL_PRIZES })
     } catch (err) {
         return res.send({ error: true, message: "Error: " + err })
     }

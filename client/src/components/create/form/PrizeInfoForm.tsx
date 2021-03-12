@@ -51,7 +51,7 @@ const PrizeInfoForm: React.FC<Props> = (props) => {
     <>
       <Alert type="error" style={{ marginBottom: "15px" }} message={<strong>All information you submit in this form is FINAL, including registering for sponsor challenges. There will be no changes made after you submit your project.</strong>} />
       <Title level={2}>Prize Info</Title>
-      <Text>Please select the prizes you would like to be considered for. Note, every team is automatically considered for the Best Overall prize. Based on your team members, these are the prizes you are eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
+      <Text>Please select the prizes you would like to be considered for. Based on your team members, these are the prizes you are eligible to choose from. If you believe something is wrong, please ask a question at help desk.</Text>
       <Form
         name="prize"
         onFinish={onFinish}

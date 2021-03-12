@@ -43,7 +43,7 @@ const ReviewForm: React.FC<Props> = (props) => {
     <>
       <Alert type="error" style={{ marginBottom: "15px" }} message={<strong>All information you submit in this form is FINAL, including registering for sponsor challenges. There will be no changes made after you submit your project.</strong>} />
       <Title level={2}>Review Submission</Title>
-      <Text>Please look over your submission details. You will not be able to change them after you submit. By submitting this form, you are agreeing to the project guidelines and cheating guidelines we have set <a href="https://live.2020.hack.gt/prizes/" target="_blank">here</a>.</Text>
+      <Text>Please look over your submission details. You will not be able to change them after you submit. By submitting this form, you are agreeing to the project guidelines and cheating guidelines we have set <a href="https://live.hack.gt" target="_blank">here</a>.</Text>
       <Form
         name="review"
         onFinish={onFinish}

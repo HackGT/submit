@@ -1,15 +1,13 @@
-let { Video, Submission } = require('../schema')
 const fetch = require('node-fetch');
 const express = require("express");
 
+const { isAdmin } = require("../auth/auth");
+const { Video, Submission } = require('../schema');
+const { MEET_URL } = require("../common");
+
 let videoRoutes = express.Router();
-const MEET_URL = process.env.MEET_URL || "https://meet.hack.gt";
 
-videoRoutes.route("/activateVideos").post(async (req, res) => {
-    if (!req.user.admin) {
-        return res.send({error: true, message: "User is not an admin"});
-    }
-
+videoRoutes.route("/activateVideos").post(isAdmin, async (req, res) => {
     const video = await Video.find({});
     if (video.length === 0) {
         try {
@@ -28,12 +26,8 @@ videoRoutes.route("/activateVideos").post(async (req, res) => {
     }
 });
 
-videoRoutes.route("/closeVideos").post(async (req, res) => {
-    if (!req.user.admin) {
-        return res.send({error: true, message: "User is not an admin"});
-    }
-
-    const videosActive = await Video.find({ isActive: true});
+videoRoutes.route("/closeVideos").post(isAdmin, async (req, res) => {
+    const videosActive = await Video.find({ isActive: true });
     if (videosActive.length === 0) {
         return res.send({ error: false, message: "Videos closed" });
     }
@@ -46,7 +40,7 @@ videoRoutes.route("/closeVideos").post(async (req, res) => {
 });
 
 videoRoutes.route("/videoStatus").get(async (req, res) => {
-    const videosActive = await Video.find({ isActive: true});
+    const videosActive = await Video.find({ isActive: true });
     if (videosActive.length === 0) {
         return res.send({ isActive: false });
     }
@@ -59,7 +53,7 @@ videoRoutes.route("/validateRoomName/:name").get(async (req, res) => {
             name: req.params.name,
             round: 'ACCEPTED'
         }).select('name');
-        const videosActive = await Video.find({ isActive: true});
+        const videosActive = await Video.find({ isActive: true });
 
         if (projects.length > 0 && videosActive.length > 0 && videosActive[0].isActive) {
             return res.send({ error: false, valid: true })
