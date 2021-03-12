@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, ConfigProvider, Empty, List, Typography, Tag, Button, Switch, message } from "antd";
+import { Card, ConfigProvider, Empty, List, Typography, Tag, Button, Switch, message, Input, Form } from "antd";
 import useAxios from "axios-hooks";
 import LoadingDisplay from "../../util/LoadingDisplay";
 import ErrorDisplay from "../../util/ErrorDisplay";
@@ -96,6 +96,21 @@ const AdminHome: React.FC = () => {
       });
   };
 
+  const makeAdmin = (values: any) => {
+    axios.post("/config/makeAdmin", { email: values.email })
+      .then((res) => {
+        if (res.data.error) {
+          message.error(res.data.message, 2);
+        } else {
+          message.success("Success", 2);
+        }
+      })
+      .catch((err) => {
+        message.error("Error: Please ask for help", 2);
+        console.log(err);
+      });
+  }
+
   const handleVideosActiveChange = (videosActive: Boolean) => {
     videosActive ? activateVideos() : closeVideos();
   };
@@ -162,6 +177,20 @@ const AdminHome: React.FC = () => {
       <div style={{ display: "flex", flexDirection: "column", width: "15%", marginBottom: "30px" }}>
         <Button onClick={endCalls}>End Judging Calls</Button>
       </div>
+
+      <Title level={4} style={{ marginTop: 0 }}>Make User an Admin</Title>
+      <div style={{ display: "flex", flexDirection: "column", width: "15%", marginBottom: "30px" }}>
+        <Form onFinish={makeAdmin}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: 'Please enter email.' }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </div>
+
 
       <ConfigProvider
         renderEmpty={() => (

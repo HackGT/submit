@@ -1,6 +1,6 @@
 const express = require("express");
 
-let { Config } = require('../schema');
+let { Config, User } = require('../schema');
 const { isAdmin } = require("../auth/auth");
 
 let configRoutes = express.Router();
@@ -22,6 +22,23 @@ configRoutes.route("/openSubmissions").post(isAdmin, async (req, res) => {
             return res.send({ error: true, message: err.message });
         }
     }
+});
+
+configRoutes.route("/makeAdmin").post(isAdmin, async (req, res) => {
+    if (!req.body.email) {
+        return res.send({ error: true, message: "Please enter an email" });
+    }
+
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+        return res.send({ error: true, message: "User does not exist" });
+    }
+
+    user.admin = true;
+    await user.save();
+
+    return res.send({ error: false });
 });
 
 configRoutes.route("/closeSubmissions").post(isAdmin, async (req, res) => {
