@@ -31,7 +31,7 @@ app.use("/auth", authRoutes);
 app.use("/submission", isAuthenticated, submissionRoutes);
 app.use("/hackathon", isAuthenticated, hackathonRoutes);
 app.use("/ballot", isAdmin, ballotRoutes);
-app.use("/config", isAdmin, configRoutes);
+app.use("/config", isAuthenticated, configRoutes);
 app.use("/video", isAdmin, videoRoutes);
 
 app.use("/public", isAuthenticated, express.static(path.join(__dirname, "/public")));
