@@ -174,7 +174,7 @@ const AdminHome: React.FC = () => {
           renderItem={(submission: any) => (
             <List.Item>
               <Card
-                title={submission.name}
+                title={submission.projectId + " - " + submission.name}
                 extra={<Button onClick={() => openModal(submission)}>Edit</Button>}
               >
                 <div style={{ marginBottom: "10px" }}>
