@@ -246,7 +246,8 @@ submissionRoutes.route("/create").post(async (req, res) => {
             members: await User.find({ email: data.members.map(member => member.email) }),
             prizes: data.prizes,
             round: flag ? 'FLAGGED' : 'SUBMITTED',
-            meetingUrl: `https://meet.hack.gt/room/${encodeURIComponent(data.name)}`
+            meetingUrl: `https://meet.hack.gt/room/${encodeURIComponent(data.name)}`,
+            expo: 1
         });
     } catch (err) {
         console.error(err);
