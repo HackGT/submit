@@ -20,3 +20,4 @@ env:
   PORT: 3000
   PRODUCTION: true
   MEET_URL: https://meet.hack.gt
+  GRAPHQL_URL: https://registration.healthtech.hack.gt/graphql
