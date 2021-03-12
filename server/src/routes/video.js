@@ -56,7 +56,8 @@ videoRoutes.route("/videoStatus").get(async (req, res) => {
 videoRoutes.route("/validateRoomName/:name").get(async (req, res) => {
     try {
         const projects = await Submission.find({
-            name: req.params.name
+            name: req.params.name,
+            round: 'ACCEPTED'
         }).select('name');
         const videosActive = await Video.find({ isActive: true});
 
