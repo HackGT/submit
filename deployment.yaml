@@ -21,3 +21,4 @@ env:
   PRODUCTION: true
   MEET_URL: https://meet.hack.gt
   CURRENT_HACKATHON: HealthTech
+  GRAPHQL_URL: https://registration.healthtech.hack.gt/graphql
