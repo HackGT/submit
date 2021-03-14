@@ -115,7 +115,7 @@ validateDevpost = async (devpost_url, submission_name) => {
         return { error: true, message: "No url specified" };
     }
 
-    if (new URL(devpost_url).hostname !== devpost.com) {
+    if (new URL(devpost_url).hostname !== "devpost.com") {
         return { error: true, message: "Invalid URL: Not devpost domain" };
     }
 
